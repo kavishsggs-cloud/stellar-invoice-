@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useWallet } from "../../../hooks/useWallet";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { InvoiceStatus } from "@repo/sdk";
-import { ArrowUpRight, Clock, CheckCircle2, XCircle, PlusCircle, FileText, Wallet } from "lucide-react";
+import { ArrowUpRight, Clock, CheckCircle2, XCircle, PlusCircle, FileText, Wallet, Activity } from "lucide-react";
+import RevenueChart from "../../../components/RevenueChart";
 
 export default function Dashboard() {
   const { address } = useWallet();
@@ -95,46 +96,60 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Recent Activity</h2>
-            <Link href="/invoices" className="text-sm text-blue-500 hover:underline">View All</Link>
-          </div>
-          {invoices.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500 border border-dashed border-zinc-800 rounded-lg">
-              No invoices found. Create your first invoice!
+        {/* Main Content Area */}
+        <div className="lg:col-span-2 space-y-6">
+          
+          {/* Revenue Chart */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-semibold flex items-center">
+                <Activity className="mr-2 text-blue-400" size={20} />
+                Revenue Trend (Last 7 Days)
+              </h2>
             </div>
-          ) : (
-            <div className="divide-y divide-zinc-800">
-              {invoices.slice(0, 5).map((invoice) => (
-                <div key={invoice.id.toString()} className="py-4 flex justify-between items-center">
-                  <div>
-                    <p className="font-medium text-white">{invoice.memo || "No description"}</p>
-                    <p className="text-sm text-zinc-400 font-mono mt-1">To: {invoice.recipient.slice(0,6)}...{invoice.recipient.slice(-4)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-white">{(Number(invoice.amount) / 10000000).toFixed(2)} XLM</p>
-                    <div className="mt-1">
-                      <span className={`inline-block text-xs px-2 py-1 rounded-full font-medium ${
-                        invoice.status === InvoiceStatus.Paid ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                        invoice.status === InvoiceStatus.Pending ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
-                        'bg-red-500/10 text-red-500 border border-red-500/20'
-                      }`}>
-                        {InvoiceStatus[invoice.status]}
-                      </span>
+            <RevenueChart invoices={invoices} />
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Recent Activity</h2>
+              <Link href="/invoices" className="text-sm text-blue-500 hover:underline">View All</Link>
+            </div>
+            {invoices.length === 0 ? (
+              <div className="text-center py-12 text-zinc-500 border border-dashed border-zinc-800 rounded-lg">
+                No invoices found. Create your first invoice!
+              </div>
+            ) : (
+              <div className="divide-y divide-zinc-800">
+                {invoices.slice(0, 5).map((invoice) => (
+                  <div key={invoice.id.toString()} className="py-4 flex justify-between items-center">
+                    <div>
+                      <p className="font-medium text-white">{invoice.memo || "No description"}</p>
+                      <p className="text-sm text-zinc-400 font-mono mt-1">To: {invoice.recipient.slice(0,6)}...{invoice.recipient.slice(-4)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-white">{(Number(invoice.amount) / 10000000).toFixed(2)} XLM</p>
+                      <div className="mt-1">
+                        <span className={`inline-block text-xs px-2 py-1 rounded-full font-medium ${
+                          invoice.status === InvoiceStatus.Paid ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                          invoice.status === InvoiceStatus.Pending ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
+                          'bg-red-500/10 text-red-500 border border-red-500/20'
+                        }`}>
+                          {InvoiceStatus[invoice.status]}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Sidebar Widgets */}
         <div className="space-y-6">
           {/* Wallet Summary */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
               <Wallet className="mr-2 text-zinc-400" size={20} />
               Wallet Summary
@@ -146,7 +161,7 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
             <div className="space-y-3">
               <Link href="/invoices/create" className="block w-full bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-3 rounded-lg text-center font-medium transition-colors">

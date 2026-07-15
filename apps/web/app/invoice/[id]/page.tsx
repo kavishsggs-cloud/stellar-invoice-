@@ -6,6 +6,7 @@ import { Invoice, InvoiceStatus } from "@repo/sdk";
 import { useWallet } from "../../../hooks/useWallet";
 import { usePayment } from "../../../hooks/usePayment";
 import { useExplorer } from "../../../hooks/useExplorer";
+import { useInvoice } from "../../../hooks/useInvoice";
 import { QRCodeSVG } from "qrcode.react";
 import { CheckCircle2, Loader2, Wallet, ExternalLink, AlertCircle, Calendar } from "lucide-react";
 import { toast } from "sonner";
@@ -17,40 +18,15 @@ export default function InvoicePage() {
   const { status, error, txHash, payInvoice } = usePayment();
   const { getTransactionUrl, getAccountUrl } = useExplorer();
 
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: invoice, isLoading, error: fetchError } = useInvoice(id);
 
-  // Polling for invoice status (in MVP, read from localStorage)
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    const fetchInvoice = () => {
-      let found: Invoice | null = null;
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key?.startsWith("invoices_")) {
-          const invoices = JSON.parse(localStorage.getItem(key) || "[]");
-          const inv = invoices.find((inv: any) => inv.id.toString() === id);
-          if (inv) {
-            found = inv;
-            break;
-          }
-        }
-      }
-      setInvoice(found);
-      setIsLoading(false);
-    };
-
-    fetchInvoice();
-    interval = setInterval(fetchInvoice, 3000);
-
-    return () => clearInterval(interval);
-  }, [id, status]);
-
-  // Handle errors from usePayment
+  // Handle errors from usePayment or fetch
   useEffect(() => {
     if (error) toast.error(error);
-  }, [error]);
+    if (fetchError) toast.error(fetchError);
+  }, [error, fetchError]);
+
+
 
   const handlePay = async () => {
     if (!invoice) return;

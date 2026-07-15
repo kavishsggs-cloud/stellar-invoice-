@@ -1,21 +1,20 @@
-# Stellar Invoice Architecture
+# Architecture
 
-## Overview
-Stellar Invoice is a decentralized invoicing platform built with Next.js (App Router), Turborepo, and Soroban (Stellar Smart Contracts).
+Stellar Invoice is built as a Turborepo monorepo encompassing the Next.js frontend application, a shared SDK, and the Soroban smart contracts.
 
 ## Monorepo Structure
 
-- `apps/web`: The Next.js frontend application.
-- `packages/sdk`: The TypeScript SDK used to interact with the Soroban smart contract and build Stellar transactions.
-- `packages/ui`: Shared UI components (Tailwind + Framer Motion).
-- `contracts/invoice_contract`: The Rust smart contract running on Soroban.
+- `apps/web`: Next.js 16 (App Router) application. It handles the UI, components, routing, and user onboarding.
+- `packages/sdk`: A shared TypeScript library wrapping `@stellar/stellar-sdk` and `@creit.tech/stellar-wallets-kit`. It provides the `InvoiceContractAPI` and hooks used by `apps/web`.
+- `contracts/invoice_contract`: The Rust-based Soroban smart contract for recording, managing, and updating the state of invoices on the Stellar network.
 
-## Data Flow
-1. **Frontend**: The React components use custom hooks (`useWallet`, `useInvoice`, `usePayment`) to manage state and invoke the SDK.
-2. **SDK (`packages/sdk`)**: Responsible for constructing XDR payloads and converting smart contract types to native JS types.
-3. **Wallet (`@creit.tech/stellar-wallets-kit`)**: Signs the XDR payloads.
-4. **Smart Contract**: Handles the creation, retrieval, status update, and cancellation of invoices securely on the blockchain.
+## State Management and Data Flow
 
-## Smart Contract State
-- Invoices are stored in `env.storage().persistent()` keyed by a uniquely incrementing `u64` ID.
-- The `INVOICE_COUNT` is stored in `instance()` storage.
+1. **Smart Contract**: The ultimate source of truth. All invoices are stored on the Stellar network.
+2. **SDK Hooks**: React Hooks (`useInvoice`, `useInvoices`, `usePayment`, `useWallet`) in the frontend communicate with the smart contract by generating transactions, signing them using the user's wallet, and submitting them to the Soroban RPC.
+3. **Frontend**: Purely presentation and interaction. Data is passed down via contexts and hooks. Errors and Loading states are handled gracefully with Error Boundaries and suspense placeholders.
+
+## Design Patterns
+
+- **Separation of Concerns**: The SDK handles all heavy-lifting regarding XDR translation, building, simulating, and submitting transactions. The Web app purely uses high-level JavaScript objects.
+- **Progressive Enhancement**: Simple UI fallbacks exist (like toast notifications) ensuring that even if a transaction fails mid-flight, the user is accurately informed.

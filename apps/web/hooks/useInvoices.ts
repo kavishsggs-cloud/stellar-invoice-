@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Invoice, InvoiceStatus } from "@repo/sdk";
+import { Invoice, InvoiceContractAPI, CONTRACT_ID, simulateContractCall } from "@repo/sdk";
 
 export const useInvoices = (address?: string | null) => {
   const [data, setData] = useState<Invoice[]>([]);
@@ -15,21 +15,17 @@ export const useInvoices = (address?: string | null) => {
     const fetchInvoices = async () => {
       setIsLoading(true);
       try {
-        // In a real environment, we'd use InvoiceContractAPI to fetch from Soroban RPC.
-        // For this MVP, we simulate fetching user's invoices from local storage or mock.
-        const storedInvoices = localStorage.getItem(`invoices_${address}`);
-        if (storedInvoices) {
-          // Parse JSON, converting string dates/numbers back to proper types if needed
-          const parsed = JSON.parse(storedInvoices).map((inv: any) => ({
-            ...inv,
-            id: BigInt(inv.id),
-            amount: BigInt(inv.amount),
-            dueDate: BigInt(inv.dueDate),
-            createdAt: BigInt(inv.createdAt),
-            updatedAt: BigInt(inv.updatedAt),
-          }));
+        const api = new InvoiceContractAPI(CONTRACT_ID);
+        const callData = api.getCallData("list_invoices", api.listInvoicesArgs(address));
+        
+        try {
+          // Simulate the transaction to read the state
+          const resultVal = await simulateContractCall(address, callData);
+          const parsed = api.parseInvoiceList(resultVal);
           setData(parsed);
-        } else {
+        } catch (simError: any) {
+          // If contract is not deployed or simulation fails, fallback to empty
+          console.warn("Contract simulation failed, maybe not deployed?", simError);
           setData([]);
         }
       } catch (e) {
@@ -42,5 +38,10 @@ export const useInvoices = (address?: string | null) => {
     fetchInvoices();
   }, [address]);
 
-  return { data, isLoading, refetch: () => setData([...data]) }; // simple refetch mock
+  const refetch = () => {
+    // Basic mock refetch by copying array to trigger re-render
+    setData([...data]);
+  };
+
+  return { data, isLoading, refetch };
 };

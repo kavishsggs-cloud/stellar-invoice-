@@ -4,11 +4,17 @@
 
 Stellar Invoice is a decentralized invoicing platform that enables freelancers, startups, agencies, and businesses to create professional invoices, receive payments in XLM or USDC, and verify every payment transparently on the Stellar network.
 
-## Features (MVP)
+## Features (Production MVP - Level 4)
 - **Connect Wallets**: Freighter, Albedo, and xBull support via Stellar Wallets Kit.
 - **Create Invoices**: Define client details, amount, asset (XLM/USDC), and due date.
-- **Pay Invoices**: Public shareable payment links.
-- **Dashboard**: Track revenue, pending, paid, and cancelled invoices.
+- **Pay Invoices**: Public shareable payment links with QR code support.
+- **Dashboard**: Track revenue, pending, paid, and cancelled invoices with dynamic charts.
+- **Smart Contract Integrated**: 100% on-chain state via Soroban.
+- **Analytics & Feedback**: User tracking and actionable feedback components embedded.
+
+## Live Testnet Deployment
+- **Contract ID**: `CBPNGAIA64YE7TEQIBWYVQPMOFITNK3LRXZVPATUJA63PR364KNCTVEO`
+- **Network**: Stellar Testnet (Passphrase: `Test SDF Network ; September 2015`)
 
 ## Quick Start
 
@@ -26,10 +32,17 @@ pnpm run dev
 ```bash
 cd contracts/invoice_contract
 cargo build --target wasm32-unknown-unknown --release
+stellar contract optimize --wasm target/wasm32-unknown-unknown/release/invoice_contract.wasm
 ```
 
-## Architecture
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for a detailed breakdown of the monorepo packages, state management, and data flow.
+## Documentation
+- [Architecture](ARCHITECTURE.md)
+- [Deployment Guide](DEPLOYMENT.md)
+- [Testing Strategy](TESTING.md)
+- [Security](SECURITY.md)
+- [Project Audit](PROJECT_AUDIT.md)
+- [Final Submission](FINAL_SUBMISSION.md)
+- [Completion Report](COMPLETION_REPORT.md)
 
 ## License
 MIT

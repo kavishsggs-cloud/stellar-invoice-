@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useWallet } from "../../../../hooks/useWallet";
-import { isValidAddress } from "@repo/sdk";
+import { isValidAddress, InvoiceContractAPI, CONTRACT_ID, buildContractTransaction, submitTransaction } from "@repo/sdk";
 import { ArrowLeft, CheckCircle2, Loader2, Save } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
 export default function CreateInvoice() {
-  const { address } = useWallet();
+  const { address, signTransaction } = useWallet();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -120,25 +120,31 @@ export default function CreateInvoice() {
     setIsSubmitting(true);
 
     try {
-      // Mock contract call -> Update local storage for MVP
-      await new Promise(resolve => setTimeout(resolve, 1500)); 
-      
-      const newInvoice = {
-        id: Date.now().toString(),
+      const api = new InvoiceContractAPI(CONTRACT_ID);
+      const callData = api.getCallData("create_invoice", api.createInvoiceArgs({
         creator: address,
-        ...formData,
-        amount: BigInt(Math.floor(Number(formData.amount) * 10000000)).toString(),
-        dueDate: new Date(formData.dueDate).getTime().toString(),
-        status: 0, // Pending
-        txHash: "",
-        createdAt: Date.now().toString(),
-        updatedAt: Date.now().toString(),
-      };
+        clientName: formData.clientName,
+        recipient: formData.recipient,
+        clientEmail: formData.clientEmail,
+        description: formData.description,
+        amount: BigInt(Math.floor(Number(formData.amount) * 10000000)), // Convert XLM to stroops
+        asset: formData.asset === "native" ? "native" : formData.asset, // Placeholder for actual asset address
+        memo: formData.memo,
+        notes: formData.notes,
+        dueDate: BigInt(new Date(formData.dueDate).getTime()),
+      }));
 
-      const key = `invoices_${address}`;
-      const existing = JSON.parse(localStorage.getItem(key) || "[]");
-      existing.unshift(newInvoice);
-      localStorage.setItem(key, JSON.stringify(existing));
+      const xdr = await buildContractTransaction(address, callData);
+      
+      const signedXdr = await signTransaction(xdr).catch(e => {
+        throw new Error("User rejected the transaction");
+      });
+      
+      const result = await submitTransaction(signedXdr);
+
+      if (result.status !== "SUCCESS") {
+        throw new Error(`Transaction failed: ${result.status}`);
+      }
       
       localStorage.removeItem("invoice_draft");
       
