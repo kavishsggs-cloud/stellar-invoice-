@@ -8,23 +8,8 @@ import {
 import { FREIGHTER_ID } from "@creit.tech/stellar-wallets-kit/modules/freighter";
 import { defaultModules } from "@creit.tech/stellar-wallets-kit/modules/utils";
 
-// Note: In a real app we can add albedo(), xbull() explicitly to modules.
-// defaultModules() enables all standard wallets.
-let kit: StellarWalletsKit | null = null;
-
-export const getKit = () => {
-  if (typeof window === "undefined") return null;
-  if (!kit) {
-    kit = new StellarWalletsKit({
-      network: Networks.TESTNET,
-      selectedWalletId: FREIGHTER_ID,
-      modules: defaultModules(),
-    });
-  }
-  return kit;
-};
-
-interface StellarContextType {
+// Default modules enables all standard wallets.
+export interface StellarContextType {
   address: string | null;
   isConnecting: boolean;
   error: string | null;
@@ -48,28 +33,37 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedAddress = localStorage.getItem("stellar_address");
-    const storedWalletId = localStorage.getItem("stellar_wallet_id");
-    
-    if (storedAddress && storedWalletId) {
-      getKit()?.setWallet(storedWalletId);
-      setAddress(storedAddress);
-    }
+    // Initialize the kit once on mount
+    StellarWalletsKit.init({
+      network: Networks.TESTNET,
+      selectedWalletId: FREIGHTER_ID,
+      modules: defaultModules(),
+    });
+
+    const checkExistingSession = async () => {
+      try {
+        const storedAddress = localStorage.getItem("stellar_address");
+        const storedWalletId = localStorage.getItem("stellar_wallet_id");
+        
+        if (storedAddress && storedWalletId) {
+          StellarWalletsKit.setWallet(storedWalletId);
+          setAddress(storedAddress);
+        }
+      } catch (e) {
+        console.error("Failed to restore session", e);
+      }
+    };
+
+    checkExistingSession();
   }, []);
 
   const connect = async () => {
     setIsConnecting(true);
     setError(null);
     try {
-      await getKit()?.openModal({
-        onWalletSelected: async (option: any) => {
-          getKit()?.setWallet(option.id);
-          const publicKey = await getKit()?.getPublicKey();
-          setAddress(publicKey);
-          localStorage.setItem("stellar_address", publicKey);
-          localStorage.setItem("stellar_wallet_id", option.id);
-        },
-      });
+      const { address } = await StellarWalletsKit.authModal();
+      setAddress(address);
+      localStorage.setItem("stellar_address", address);
     } catch (e: any) {
       console.error("Wallet connection failed:", e);
       setError(e.message || "Failed to connect wallet.");
@@ -78,7 +72,12 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const disconnect = () => {
+  const disconnect = async () => {
+    try {
+      await StellarWalletsKit.disconnect();
+    } catch (e) {
+      console.error("Error disconnecting wallet", e);
+    }
     setAddress(null);
     localStorage.removeItem("stellar_address");
     localStorage.removeItem("stellar_wallet_id");
@@ -86,7 +85,7 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
 
   const signTransaction = async (xdr: string): Promise<string> => {
     if (!address) throw new Error("Wallet not connected");
-    const res = await getKit()?.signTransaction(xdr);
+    const res = await StellarWalletsKit.signTransaction(xdr);
     if (!res) throw new Error("Failed to sign transaction");
     return res.signedTxXdr;
   };

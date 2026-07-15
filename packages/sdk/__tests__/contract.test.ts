@@ -3,7 +3,7 @@ import { InvoiceContractAPI } from '../src/contract';
 import { InvoiceStatus } from '../src/types';
 
 describe('InvoiceContractAPI', () => {
-  const contractId = 'CDMLFMKMMD7G7...'; // Mock ID
+  const contractId = 'CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSC4'; // Mock ID
   const api = new InvoiceContractAPI(contractId);
 
   it('should construct createInvoiceArgs correctly', () => {
