@@ -35,7 +35,7 @@ export default function CreateInvoice() {
       try {
         setFormData(JSON.parse(draft));
         toast.info("Draft loaded successfully");
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -128,7 +128,7 @@ export default function CreateInvoice() {
         clientEmail: formData.clientEmail,
         description: formData.description,
         amount: BigInt(Math.floor(Number(formData.amount) * 10000000)), // Convert XLM to stroops
-        asset: formData.asset === "native" ? "native" : formData.asset, // Placeholder for actual asset address
+        asset: formData.asset === "native" ? "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC" : formData.asset,
         memo: formData.memo,
         notes: formData.notes,
         dueDate: BigInt(new Date(formData.dueDate).getTime()),
@@ -136,7 +136,7 @@ export default function CreateInvoice() {
 
       const xdr = await buildContractTransaction(address, callData);
       
-      const signedXdr = await signTransaction(xdr).catch(e => {
+      const signedXdr = await signTransaction(xdr).catch(() => {
         throw new Error("User rejected the transaction");
       });
       
@@ -154,10 +154,15 @@ export default function CreateInvoice() {
       setTimeout(() => {
         router.push("/invoices");
       }, 2000);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      toast.error(e.message || "Failed to create invoice");
-      setErrors({ submit: e.message || "Failed to create invoice" });
+      if (e instanceof Error) {
+        toast.error(e.message || "Failed to create invoice");
+        setErrors({ submit: e.message || "Failed to create invoice" });
+      } else {
+        toast.error("Failed to create invoice");
+        setErrors({ submit: "Failed to create invoice" });
+      }
     } finally {
       setIsSubmitting(false);
     }

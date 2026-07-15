@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Invoice, InvoiceStatus } from "@repo/sdk";
+import { InvoiceStatus } from "@repo/sdk";
 import { useWallet } from "../../../hooks/useWallet";
 import { usePayment } from "../../../hooks/usePayment";
 import { useExplorer } from "../../../hooks/useExplorer";
@@ -14,8 +14,8 @@ import { toast } from "sonner";
 export default function InvoicePage() {
   const params = useParams();
   const id = params.id as string;
-  const { address, connect, disconnect } = useWallet();
-  const { status, error, txHash, payInvoice } = usePayment();
+  const { address, connect } = useWallet();
+  const { status, error, payInvoice } = usePayment();
   const { getTransactionUrl, getAccountUrl } = useExplorer();
 
   const { data: invoice, isLoading, error: fetchError } = useInvoice(id);
@@ -35,7 +35,7 @@ export default function InvoicePage() {
       return;
     }
     
-    await payInvoice(BigInt(invoice.id), invoice.amount, invoice.asset || "native");
+    await payInvoice(BigInt(invoice.id));
   };
 
   if (isLoading) {
@@ -148,7 +148,7 @@ export default function InvoicePage() {
                 {invoice.notes && (
                   <div>
                     <p className="text-zinc-500 mb-1">Notes</p>
-                    <p className="text-zinc-300 italic">"{invoice.notes}"</p>
+                    <p className="text-zinc-300 italic">&quot;{invoice.notes}&quot;</p>
                   </div>
                 )}
               </div>

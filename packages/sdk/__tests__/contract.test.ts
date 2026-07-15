@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { InvoiceContractAPI } from '../src/contract';
 import { InvoiceStatus } from '../src/types';
+import { Keypair } from '@stellar/stellar-sdk';
 
 describe('InvoiceContractAPI', () => {
   const contractId = 'CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSC4'; // Mock ID
@@ -8,13 +9,13 @@ describe('InvoiceContractAPI', () => {
 
   it('should construct createInvoiceArgs correctly', () => {
     const args = api.createInvoiceArgs({
-      creator: 'GBX...',
+      creator: Keypair.random().publicKey(),
       clientName: 'Acme',
-      recipient: 'GBY...',
+      recipient: Keypair.random().publicKey(),
       clientEmail: 'acme@example.com',
       description: 'Web Design',
       amount: 100n,
-      asset: 'native',
+      asset: 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC',
       memo: 'memo123',
       notes: 'notes123',
       dueDate: 1234567890n,

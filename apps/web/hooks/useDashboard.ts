@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Invoice, InvoiceStatus } from "@repo/sdk";
+import { InvoiceStatus } from "@repo/sdk";
 import { useInvoices } from "./useInvoices";
 import { useWallet } from "./useWallet";
 

@@ -26,7 +26,7 @@ export const useInvoice = (id: string | null) => {
           const resultVal = await simulateContractCall(dummySource, callData);
           const parsed = api.parseInvoice(resultVal);
           setData(parsed);
-        } catch (simError: any) {
+        } catch (simError) {
           console.warn("Contract simulation failed, maybe not deployed or invoice not found?", simError);
           setError("Invoice not found or contract not deployed");
         }

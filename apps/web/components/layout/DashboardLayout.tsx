@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, PlusCircle, Settings, Menu, X, LogOut, Loader2 } from "lucide-react";
+import { LayoutDashboard, FileText, PlusCircle, Settings, Menu, X, LogOut } from "lucide-react";
 import { useWallet } from "../../hooks/useWallet";
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {

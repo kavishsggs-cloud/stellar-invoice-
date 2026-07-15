@@ -18,7 +18,7 @@ export async function buildContractTransaction(source: string, operation: xdr.Op
   let sourceAccount;
   try {
     sourceAccount = await server.getAccount(source);
-  } catch (e) {
+  } catch {
     sourceAccount = new Account(source, "1");
   }
   
@@ -35,7 +35,7 @@ export async function buildContractTransaction(source: string, operation: xdr.Op
 }
 
 export async function simulateContractCall(source: string, operation: xdr.Operation): Promise<xdr.ScVal> {
-  let sourceAccount = new Account(source, "1");
+  const sourceAccount = new Account(source, "1");
   const tx = new TransactionBuilder(sourceAccount, {
     fee: "100",
     networkPassphrase: NETWORK_PASSPHRASE,
@@ -59,7 +59,9 @@ export async function submitTransaction(txXdr: string) {
     const tx = TransactionBuilder.fromXDR(txXdr, NETWORK_PASSPHRASE) as Transaction;
     const sendResponse = await server.sendTransaction(tx);
     if (sendResponse.status === "ERROR") {
-      throw new Error(`Transaction failed: ${JSON.stringify((sendResponse as any).errorResultXdr || (sendResponse as any).errorResult)}`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const errRes = sendResponse as any;
+      throw new Error(`Transaction failed: ${JSON.stringify(errRes.errorResultXdr || errRes.errorResult)}`);
     }
     if (sendResponse.status === "PENDING") {
       let txResponse = await server.getTransaction(sendResponse.hash);
@@ -77,7 +79,7 @@ export async function submitTransaction(txXdr: string) {
       }
     }
     return { hash: sendResponse.hash, status: sendResponse.status };
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Submission error:", e);
     throw e;
   }

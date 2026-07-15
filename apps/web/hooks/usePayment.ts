@@ -10,7 +10,7 @@ export const usePayment = () => {
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  const payInvoice = async (invoiceId: bigint, amount: bigint, asset: string) => {
+  const payInvoice = async (invoiceId: bigint) => {
     if (!address) {
       setError("Wallet not connected");
       setStatus("error");
@@ -36,7 +36,7 @@ export const usePayment = () => {
       const xdr = await buildContractTransaction(address, callData);
       
       setStatus("pending");
-      const signedXdr = await signTransaction(xdr).catch(e => {
+      const signedXdr = await signTransaction(xdr).catch(() => {
         throw new Error("User rejected the transaction");
       });
       
@@ -49,9 +49,13 @@ export const usePayment = () => {
       } else {
         throw new Error(`Transaction failed: ${result.status}`);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      setError(e.message || "Payment failed");
+      if (e instanceof Error) {
+        setError(e.message || "Payment failed");
+      } else {
+        setError("Payment failed");
+      }
       setStatus("error");
     }
   };

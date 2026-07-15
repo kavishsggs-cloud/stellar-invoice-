@@ -64,9 +64,13 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
       const { address } = await StellarWalletsKit.authModal();
       setAddress(address);
       localStorage.setItem("stellar_address", address);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Wallet connection failed:", e);
-      setError(e.message || "Failed to connect wallet.");
+      if (e instanceof Error) {
+        setError(e.message || "Failed to connect wallet.");
+      } else {
+        setError("Failed to connect wallet.");
+      }
     } finally {
       setIsConnecting(false);
     }

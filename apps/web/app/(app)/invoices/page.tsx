@@ -119,7 +119,7 @@ export default function InvoicesList() {
             </div>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as "date_desc" | "date_asc" | "amount_desc" | "amount_asc")}
               className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all flex-1 sm:flex-none"
             >
               <option value="date_desc">Newest First</option>
@@ -137,7 +137,7 @@ export default function InvoicesList() {
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">No invoices yet</h3>
             <p className="text-zinc-400 max-w-md mx-auto mb-6">
-              You haven't created any invoices. Get started by creating your first invoice and sharing the payment link.
+              You haven&apos;t created any invoices. Get started by creating your first invoice and sharing the payment link.
             </p>
             <Link
               href="/invoices/create"

@@ -58,6 +58,7 @@ export class InvoiceContractAPI {
   }
 
   public parseInvoice(val: xdr.ScVal): Invoice {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const raw = scValToNative(val) as Record<string, any>;
     return {
       id: BigInt(raw.id),
@@ -79,6 +80,7 @@ export class InvoiceContractAPI {
   }
 
   public parseInvoiceList(val: xdr.ScVal): Invoice[] {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rawList = scValToNative(val) as Record<string, any>[];
     return rawList.map(raw => ({
       id: BigInt(raw.id),
@@ -99,6 +101,7 @@ export class InvoiceContractAPI {
     }));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private parseStatus(statusVal: any): InvoiceStatus {
     if (typeof statusVal === 'string') {
       if (statusVal === 'Pending') return InvoiceStatus.Pending;
@@ -108,6 +111,7 @@ export class InvoiceContractAPI {
     return InvoiceStatus.Pending;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public getCallData(method: string, args: xdr.ScVal[]): any {
     return this.contract.call(method, ...args);
   }

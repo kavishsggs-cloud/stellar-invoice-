@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { X, Wallet, FileText, Share2, ChevronRight, ChevronLeft } from "lucide-react";
-import { useWallet } from "../hooks/useWallet";
 
 const ONBOARDING_STEPS = [
   {
@@ -25,7 +24,6 @@ const ONBOARDING_STEPS = [
 export function Onboarding() {
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const { address } = useWallet();
 
   useEffect(() => {
     // Check if the user has completed onboarding

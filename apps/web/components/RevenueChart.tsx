@@ -65,6 +65,7 @@ export default function RevenueChart({ invoices }: { invoices: Invoice[] }) {
           <Tooltip
             contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', borderRadius: '8px' }}
             itemStyle={{ color: '#3b82f6' }}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             formatter={(value: any) => [`${Number(value).toFixed(2)} XLM`, 'Revenue']}
           />
           <Area

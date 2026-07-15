@@ -23,7 +23,7 @@ export const useInvoices = (address?: string | null) => {
           const resultVal = await simulateContractCall(address, callData);
           const parsed = api.parseInvoiceList(resultVal);
           setData(parsed);
-        } catch (simError: any) {
+        } catch (simError) {
           // If contract is not deployed or simulation fails, fallback to empty
           console.warn("Contract simulation failed, maybe not deployed?", simError);
           setData([]);
