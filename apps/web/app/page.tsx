@@ -25,16 +25,16 @@ export default function LandingPage() {
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
 
       {/* Navbar */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-6 max-w-7xl mx-auto">
+      <nav className="relative z-50 flex items-center justify-between px-4 sm:px-6 py-6 max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-3 text-2xl font-bold tracking-tight"
+          className="flex items-center gap-3 text-xl sm:text-2xl font-bold tracking-tight"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-cta shadow-[var(--shadow-premium-button)]">
             <Hexagon className="h-6 w-6 text-white" strokeWidth={2.5} />
           </div>
-          <span>Stellar Invoice</span>
+          <span className="hidden min-[380px]:inline">Stellar Invoice</span>
         </motion.div>
 
         <motion.div 
@@ -42,14 +42,14 @@ export default function LandingPage() {
           animate={{ opacity: 1, x: 0 }}
         >
           {address ? (
-            <div className="flex items-center gap-4">
-              <Badge variant="neutral" className="px-4 py-2 text-sm font-mono backdrop-blur-md">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Badge variant="neutral" className="hidden md:inline-flex px-4 py-2 text-sm font-mono backdrop-blur-md">
                 {formatAddress(address)}
               </Badge>
               <Link href="/dashboard">
                 <Button variant="secondary" size="sm">Dashboard</Button>
               </Link>
-              <Button variant="ghost" size="sm" onClick={disconnect}>
+              <Button variant="ghost" size="sm" onClick={disconnect} className="text-xs sm:text-sm px-2 sm:px-3">
                 Disconnect
               </Button>
             </div>
