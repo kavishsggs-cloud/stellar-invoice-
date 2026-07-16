@@ -8,9 +8,9 @@ export function isValidAddress(address: string): boolean {
   }
 }
 
-export const NETWORK_PASSPHRASE = Networks.TESTNET;
-export const RPC_URL = 'https://soroban-testnet.stellar.org:443';
-export const CONTRACT_ID = "CBPNGAIA64YE7TEQIBWYVQPMOFITNK3LRXZVPATUJA63PR364KNCTVEO";
+export const NETWORK_PASSPHRASE = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE) || Networks.TESTNET;
+export const RPC_URL = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_STELLAR_RPC_URL) || 'https://soroban-testnet.stellar.org:443';
+export const CONTRACT_ID = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_CONTRACT_ID) || "CBPNGAIA64YE7TEQIBWYVQPMOFITNK3LRXZVPATUJA63PR364KNCTVEO";
 
 export const server = new rpc.Server(RPC_URL);
 
