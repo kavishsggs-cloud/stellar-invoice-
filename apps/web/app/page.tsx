@@ -3,8 +3,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useStellar } from "../providers/StellarProvider";
-import { Wallet, ArrowRight, Zap, Globe, ShieldCheck } from "lucide-react";
+import { Wallet, ArrowRight, Zap, Globe, ShieldCheck, Hexagon } from "lucide-react";
 import Link from "next/link";
+import { Button } from "../components/ui/button";
+import { Card } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 
 export default function LandingPage() {
   const { address, connect, disconnect } = useStellar();
@@ -15,22 +18,23 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-blue-500/30 overflow-hidden font-sans">
+    <div className="min-h-screen bg-hero-gradient text-text-primary selection:bg-stellar-blue selection:text-white overflow-hidden font-sans relative">
       {/* Background Gradients */}
-      <div className="fixed inset-0 z-0 flex justify-center items-center pointer-events-none">
-        <div className="absolute top-[-10%] w-[800px] h-[800px] bg-blue-600/20 rounded-full blur-[120px] mix-blend-screen" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] mix-blend-screen" />
-      </div>
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-stellar-blue/15 blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-premium/15 blur-[150px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-overlay" />
 
       {/* Navbar */}
       <nav className="relative z-50 flex items-center justify-between px-6 py-6 max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-2 text-xl font-bold tracking-tight"
+          className="flex items-center gap-3 text-2xl font-bold tracking-tight"
         >
-          <Zap className="text-blue-500 w-6 h-6" />
-          <span>Stellar<span className="text-blue-500">Invoice</span></span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-cta shadow-[var(--shadow-premium-button)]">
+            <Hexagon className="h-6 w-6 text-white" strokeWidth={2.5} />
+          </div>
+          <span>Stellar Invoice</span>
         </motion.div>
 
         <motion.div 
@@ -39,25 +43,21 @@ export default function LandingPage() {
         >
           {address ? (
             <div className="flex items-center gap-4">
-              <span className="px-4 py-2 text-sm font-medium border border-white/10 rounded-full bg-white/5 backdrop-blur-md">
+              <Badge variant="neutral" className="px-4 py-2 text-sm font-mono backdrop-blur-md">
                 {formatAddress(address)}
-              </span>
-              <Link href="/dashboard" className="px-5 py-2 text-sm font-medium text-black bg-white rounded-full hover:bg-neutral-200 transition-colors">
-                Dashboard
+              </Badge>
+              <Link href="/dashboard">
+                <Button variant="secondary" size="sm">Dashboard</Button>
               </Link>
-              <button onClick={disconnect} className="text-sm text-neutral-400 hover:text-white transition-colors">
+              <Button variant="ghost" size="sm" onClick={disconnect}>
                 Disconnect
-              </button>
+              </Button>
             </div>
           ) : (
-            <button 
-              onClick={connect}
-              className="group relative flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-blue-600 rounded-full hover:bg-blue-500 transition-all active:scale-95"
-            >
+            <Button onClick={connect} size="md">
               <Wallet className="w-4 h-4" />
               <span>Connect Wallet</span>
-              <div className="absolute inset-0 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)] opacity-0 group-hover:opacity-100 transition-opacity" />
-            </button>
+            </Button>
           )}
         </motion.div>
       </nav>
@@ -68,28 +68,30 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 px-3 py-1 mb-8 text-sm border rounded-full border-blue-500/30 bg-blue-500/10 text-blue-300"
+          className="mb-8"
         >
-          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-          Powered by Soroban Smart Contracts
+          <Badge variant="premium" className="px-4 py-2 gap-2 text-sm backdrop-blur-md shadow-[0_0_20px_rgba(139,92,246,0.2)]">
+            <span className="w-2 h-2 rounded-full bg-premium animate-pulse" />
+            Powered by Soroban Smart Contracts
+          </Badge>
         </motion.div>
 
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl bg-clip-text text-transparent bg-gradient-to-br from-white via-neutral-200 to-neutral-500 pb-2"
+          className="text-6xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl text-transparent bg-clip-text bg-gradient-to-br from-white via-text-primary to-text-muted pb-4 leading-tight"
         >
-          Create. Share. <br/> Get Paid.
+          Create. Share. <br/> <span className="text-transparent bg-clip-text bg-primary-cta">Get Paid.</span>
         </motion.h1>
 
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-2xl mt-8 text-lg sm:text-xl text-neutral-400 leading-relaxed"
+          className="max-w-2xl mt-6 text-lg sm:text-xl text-text-secondary leading-relaxed font-light"
         >
-          Borderless invoicing powered by the Stellar network. Send professional invoices and receive fast, low-fee payments in XLM or USDC instantly.
+          Borderless invoicing built for the modern internet. Send professional invoices and receive fast, low-fee payments in XLM or USDC instantly.
         </motion.p>
 
         <motion.div 
@@ -99,21 +101,17 @@ export default function LandingPage() {
           className="flex flex-col sm:flex-row gap-4 mt-12"
         >
           {address ? (
-            <Link 
-              href="/dashboard"
-              className="flex items-center justify-center gap-2 px-8 py-4 text-base font-medium text-black bg-white rounded-full hover:bg-neutral-200 transition-colors"
-            >
-              Go to Dashboard
-              <ArrowRight className="w-4 h-4" />
+            <Link href="/dashboard">
+              <Button size="lg" className="px-8 shadow-[var(--shadow-premium-button)]">
+                Go to Dashboard
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
             </Link>
           ) : (
-            <button 
-              onClick={connect}
-              className="flex items-center justify-center gap-2 px-8 py-4 text-base font-medium text-white bg-blue-600 rounded-full hover:bg-blue-500 transition-colors shadow-[0_0_30px_rgba(37,99,235,0.3)]"
-            >
+            <Button size="lg" onClick={connect} className="px-8 shadow-[var(--shadow-premium-button)]">
               Start Invoicing
-              <ArrowRight className="w-4 h-4" />
-            </button>
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
           )}
         </motion.div>
 
@@ -122,20 +120,20 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="grid w-full grid-cols-1 gap-6 mt-32 sm:grid-cols-3 text-left"
+          className="grid w-full grid-cols-1 gap-6 mt-32 sm:grid-cols-3 text-left relative z-20"
         >
           {[
             { icon: Globe, title: "Borderless Payments", desc: "Settle invoices instantly across the globe with virtually zero fees on Stellar." },
             { icon: ShieldCheck, title: "On-Chain Verification", desc: "Every invoice and payment is immutably recorded via Soroban smart contracts." },
             { icon: Zap, title: "USDC & XLM Ready", desc: "Get paid in stablecoins or native XLM, giving you flexibility and stability." }
           ].map((feature, i) => (
-            <div key={i} className="p-6 border border-neutral-800 rounded-2xl bg-neutral-900/50 backdrop-blur-sm hover:bg-neutral-800/50 transition-colors">
-              <div className="flex items-center justify-center w-12 h-12 mb-4 rounded-xl bg-blue-500/10 text-blue-500">
-                <feature.icon className="w-6 h-6" />
+            <Card key={i} variant="glass" padding="lg" className="hover:-translate-y-2 transition-transform duration-300">
+              <div className="flex items-center justify-center w-14 h-14 mb-6 rounded-2xl bg-stellar-blue/10 text-stellar-blue border border-stellar-blue/20">
+                <feature.icon className="w-7 h-7" />
               </div>
-              <h3 className="mb-2 text-lg font-semibold text-white">{feature.title}</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">{feature.desc}</p>
-            </div>
+              <h3 className="mb-3 text-xl font-bold text-white tracking-tight">{feature.title}</h3>
+              <p className="text-text-secondary text-base leading-relaxed font-light">{feature.desc}</p>
+            </Card>
           ))}
         </motion.div>
       </main>

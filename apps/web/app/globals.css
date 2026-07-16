@@ -1,26 +1,36 @@
 @import "tailwindcss";
 @import "@repo/tailwind-config";
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@utility bg-hero-gradient {
+  background: linear-gradient(135deg, var(--color-midnight-navy) 0%, var(--color-slate-bg) 45%, #102B44 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+@utility bg-primary-cta {
+  background: linear-gradient(90deg, var(--color-stellar-blue), var(--color-emerald));
+}
+
+@utility bg-card-highlight {
+  background: linear-gradient(135deg, rgba(8, 181, 229, 0.18), rgba(20, 217, 196, 0.08));
+}
+
+@utility bg-glass-glow {
+  background: radial-gradient(circle, rgba(8, 181, 229, 0.18), transparent 70%);
+}
+
+@utility glass-panel {
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border-glass);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--color-midnight-navy);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-stellar-blue);
+  color: #fff;
 }

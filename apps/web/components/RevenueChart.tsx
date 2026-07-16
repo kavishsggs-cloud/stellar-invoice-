@@ -43,36 +43,36 @@ export default function RevenueChart({ invoices }: { invoices: Invoice[] }) {
         >
           <defs>
             <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+              <stop offset="5%" stopColor="#08B5E5" stopOpacity={0.4} />
+              <stop offset="95%" stopColor="#08B5E5" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#27272a" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
           <XAxis 
             dataKey="date" 
-            stroke="#52525b"
+            stroke="#6F8097"
             fontSize={12}
             tickLine={false}
             axisLine={false}
           />
           <YAxis 
-            stroke="#52525b"
+            stroke="#6F8097"
             fontSize={12}
             tickLine={false}
             axisLine={false}
             tickFormatter={(value) => `${value}`}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', borderRadius: '8px' }}
-            itemStyle={{ color: '#3b82f6' }}
+            contentStyle={{ backgroundColor: '#132238', borderColor: 'rgba(255,255,255,0.08)', borderRadius: '16px', backdropFilter: 'blur(10px)' }}
+            itemStyle={{ color: '#08B5E5', fontWeight: 600 }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             formatter={(value: any) => [`${Number(value).toFixed(2)} XLM`, 'Revenue']}
           />
           <Area
             type="monotone"
             dataKey="amount"
-            stroke="#3b82f6"
-            strokeWidth={2}
+            stroke="#08B5E5"
+            strokeWidth={3}
             fillOpacity={1}
             fill="url(#colorAmount)"
           />

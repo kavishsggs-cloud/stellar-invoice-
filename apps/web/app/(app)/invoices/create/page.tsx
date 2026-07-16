@@ -7,6 +7,10 @@ import { isValidAddress, InvoiceContractAPI, CONTRACT_ID, buildContractTransacti
 import { ArrowLeft, CheckCircle2, Loader2, Save } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { Button } from "../../../../components/ui/button";
+import { Card } from "../../../../components/ui/card";
+import { Input } from "../../../../components/ui/input";
 
 export default function CreateInvoice() {
   const { address, signTransaction } = useWallet();
@@ -168,193 +172,243 @@ export default function CreateInvoice() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  };
+
   if (success) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center space-y-6 animate-in fade-in zoom-in duration-500">
-        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
-          <CheckCircle2 className="text-green-500" size={40} />
-        </div>
-        <h1 className="text-3xl font-bold">Invoice Created!</h1>
-        <p className="text-zinc-400">Your invoice has been successfully recorded.</p>
-        <p className="text-sm text-zinc-500 flex items-center justify-center">
-          <Loader2 className="animate-spin mr-2" size={16} /> Redirecting to invoices...
-        </p>
+      <div className="max-w-md mx-auto py-24 text-center space-y-6">
+        <motion.div 
+          initial={{ scale: 0, opacity: 0 }} 
+          animate={{ scale: 1, opacity: 1 }} 
+          transition={{ type: "spring", bounce: 0.5 }}
+          className="w-24 h-24 bg-success/20 rounded-full flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(34,197,94,0.3)]"
+        >
+          <CheckCircle2 className="text-success" size={48} />
+        </motion.div>
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
+          <h1 className="text-3xl font-bold text-white">Invoice Created!</h1>
+          <p className="text-text-secondary mt-2 mb-6">Your invoice has been successfully recorded on the Stellar network.</p>
+          <div className="flex items-center justify-center space-x-2 text-sm text-text-muted bg-surface/50 py-3 rounded-2xl border border-white/5">
+            <Loader2 className="animate-spin" size={16} /> 
+            <span>Redirecting to invoices...</span>
+          </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center justify-between mb-8">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="max-w-3xl mx-auto space-y-6"
+    >
+      <motion.div variants={itemVariants} className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
-          <Link href="/invoices" className="p-2 hover:bg-zinc-800 rounded-full transition-colors">
-            <ArrowLeft size={24} />
+          <Link href="/invoices">
+            <Button variant="ghost" size="sm" className="w-10 h-10 p-0 rounded-full">
+              <ArrowLeft size={20} />
+            </Button>
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight">Create Invoice</h1>
-        </div>
-        <button 
-          type="button" 
-          onClick={saveDraft}
-          className="flex items-center space-x-2 text-sm text-zinc-400 hover:text-white transition-colors"
-        >
-          <Save size={16} />
-          <span>Save Draft</span>
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 md:p-8 space-y-8 shadow-xl">
-        {errors.submit && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm">
-            {errors.submit}
-          </div>
-        )}
-
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold border-b border-zinc-800 pb-2 text-blue-400">Client Details</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Client Name *</label>
-              <input
-                type="text"
-                name="clientName"
-                value={formData.clientName}
-                onChange={handleChange}
-                className={`w-full bg-zinc-950 border ${errors.clientName ? 'border-red-500' : 'border-zinc-800'} rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all`}
-                placeholder="Acme Corp"
-              />
-              {errors.clientName && <p className="text-red-500 text-xs mt-1 animate-in slide-in-from-top-1">{errors.clientName}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Client Email (Optional)</label>
-              <input
-                type="email"
-                name="clientEmail"
-                value={formData.clientEmail}
-                onChange={handleChange}
-                className={`w-full bg-zinc-950 border ${errors.clientEmail ? 'border-red-500' : 'border-zinc-800'} rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all`}
-                placeholder="billing@acme.com"
-              />
-              {errors.clientEmail && <p className="text-red-500 text-xs mt-1 animate-in slide-in-from-top-1">{errors.clientEmail}</p>}
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Client Wallet Address *</label>
-              <input
-                type="text"
-                name="recipient"
-                value={formData.recipient}
-                onChange={handleChange}
-                className={`w-full bg-zinc-950 border ${errors.recipient ? 'border-red-500' : 'border-zinc-800'} rounded-lg px-4 py-2 font-mono text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all`}
-                placeholder="G..."
-              />
-              {errors.recipient && <p className="text-red-500 text-xs mt-1 animate-in slide-in-from-top-1">{errors.recipient}</p>}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold border-b border-zinc-800 pb-2 text-blue-400">Invoice Details</h2>
-          
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Description *</label>
-            <input
-              type="text"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className={`w-full bg-zinc-950 border ${errors.description ? 'border-red-500' : 'border-zinc-800'} rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all`}
-              placeholder="Web Design Services - Phase 1"
-            />
-            {errors.description && <p className="text-red-500 text-xs mt-1 animate-in slide-in-from-top-1">{errors.description}</p>}
+            <h1 className="text-3xl font-bold tracking-tight text-white">Create Invoice</h1>
+            <p className="text-text-secondary mt-1">Issue a new blockchain invoice</p>
           </div>
+        </div>
+        <Button 
+          variant="secondary" 
+          size="sm"
+          onClick={saveDraft}
+        >
+          <Save size={16} className="mr-2" />
+          <span>Save Draft</span>
+        </Button>
+      </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Amount *</label>
-              <div className="relative">
-                <input
-                  type="number"
-                  name="amount"
-                  step="0.0000001"
-                  value={formData.amount}
-                  onChange={handleChange}
-                  className={`w-full bg-zinc-950 border ${errors.amount ? 'border-red-500' : 'border-zinc-800'} rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all`}
-                  placeholder="100.00"
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <span className="text-zinc-500 font-medium">{formData.asset === 'native' ? 'XLM' : 'USDC'}</span>
+      <motion.div variants={itemVariants}>
+        <form onSubmit={handleSubmit}>
+          <Card variant="glass" padding="lg" className="space-y-8">
+            {errors.submit && (
+              <div className="bg-danger/10 border border-danger/20 text-danger p-4 rounded-xl text-sm flex items-center">
+                <div className="w-2 h-2 rounded-full bg-danger mr-3 animate-pulse"></div>
+                {errors.submit}
+              </div>
+            )}
+
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                <h2 className="text-lg font-semibold text-stellar-blue">Client Details</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-text-secondary">Client Name *</label>
+                  <Input
+                    type="text"
+                    name="clientName"
+                    value={formData.clientName}
+                    onChange={handleChange}
+                    error={!!errors.clientName}
+                    placeholder="Acme Corp"
+                  />
+                  {errors.clientName && <p className="text-danger text-xs mt-1">{errors.clientName}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-text-secondary">Client Email <span className="text-text-muted">(Optional)</span></label>
+                  <Input
+                    type="email"
+                    name="clientEmail"
+                    value={formData.clientEmail}
+                    onChange={handleChange}
+                    error={!!errors.clientEmail}
+                    placeholder="billing@acme.com"
+                  />
+                  {errors.clientEmail && <p className="text-danger text-xs mt-1">{errors.clientEmail}</p>}
+                </div>
+
+                <div className="md:col-span-2 space-y-2">
+                  <label className="block text-sm font-medium text-text-secondary">Client Stellar Address *</label>
+                  <Input
+                    type="text"
+                    name="recipient"
+                    value={formData.recipient}
+                    onChange={handleChange}
+                    error={!!errors.recipient}
+                    placeholder="G..."
+                    className="font-mono text-sm"
+                  />
+                  {errors.recipient && <p className="text-danger text-xs mt-1">{errors.recipient}</p>}
                 </div>
               </div>
-              {errors.amount && <p className="text-red-500 text-xs mt-1 animate-in slide-in-from-top-1">{errors.amount}</p>}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Asset *</label>
-              <select
-                name="asset"
-                value={formData.asset}
-                onChange={handleChange}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                <h2 className="text-lg font-semibold text-stellar-blue">Invoice Details</h2>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-text-secondary">Description *</label>
+                <Input
+                  type="text"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  error={!!errors.description}
+                  placeholder="Web Design Services - Phase 1"
+                />
+                {errors.description && <p className="text-danger text-xs mt-1">{errors.description}</p>}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-text-secondary">Amount *</label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      name="amount"
+                      step="0.0000001"
+                      value={formData.amount}
+                      onChange={handleChange}
+                      error={!!errors.amount}
+                      placeholder="100.00"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                      <span className="text-text-muted font-medium text-sm">{formData.asset === 'native' ? 'XLM' : 'USDC'}</span>
+                    </div>
+                  </div>
+                  {errors.amount && <p className="text-danger text-xs mt-1">{errors.amount}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-text-secondary">Asset *</label>
+                  <select
+                    name="asset"
+                    value={formData.asset}
+                    onChange={handleChange}
+                    className="flex h-12 w-full rounded-2xl border border-white/10 bg-surface/50 px-4 py-2 text-sm text-white placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-stellar-blue/30 transition-all cursor-pointer"
+                  >
+                    <option value="native">XLM (Native)</option>
+                    <option value="usdc">USDC</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-text-secondary">Due Date *</label>
+                  <Input
+                    type="date"
+                    name="dueDate"
+                    value={formData.dueDate}
+                    onChange={handleChange}
+                    error={!!errors.dueDate}
+                    className="[color-scheme:dark]"
+                  />
+                  {errors.dueDate && <p className="text-danger text-xs mt-1">{errors.dueDate}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-text-secondary">Stellar Memo <span className="text-text-muted">(Optional)</span></label>
+                  <Input
+                    type="text"
+                    name="memo"
+                    value={formData.memo}
+                    onChange={handleChange}
+                    error={!!errors.memo}
+                    placeholder="Max 28 chars"
+                    maxLength={28}
+                  />
+                  {errors.memo && <p className="text-danger text-xs mt-1">{errors.memo}</p>}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-text-secondary">Notes <span className="text-text-muted">(Optional)</span></label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  rows={3}
+                  className="flex w-full rounded-2xl border border-white/10 bg-surface/50 px-4 py-3 text-sm text-white placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-stellar-blue/30 transition-all resize-none"
+                  placeholder="Thank you for your business!"
+                />
+              </div>
+            </div>
+
+            <div className="pt-6 mt-6 border-t border-white/5">
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full text-base font-bold"
+                disabled={isSubmitting}
               >
-                <option value="native">XLM (Native)</option>
-                <option value="usdc">USDC</option>
-              </select>
+                {isSubmitting ? (
+                  <span className="flex items-center">
+                    <Loader2 className="animate-spin mr-2" size={20} />
+                    Processing on Network...
+                  </span>
+                ) : (
+                  "Create & Issue Invoice"
+                )}
+              </Button>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Due Date *</label>
-              <input
-                type="date"
-                name="dueDate"
-                value={formData.dueDate}
-                onChange={handleChange}
-                className={`w-full bg-zinc-950 border ${errors.dueDate ? 'border-red-500' : 'border-zinc-800'} rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all [color-scheme:dark]`}
-              />
-              {errors.dueDate && <p className="text-red-500 text-xs mt-1 animate-in slide-in-from-top-1">{errors.dueDate}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1">Stellar Memo (Optional)</label>
-              <input
-                type="text"
-                name="memo"
-                value={formData.memo}
-                onChange={handleChange}
-                className={`w-full bg-zinc-950 border ${errors.memo ? 'border-red-500' : 'border-zinc-800'} rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all`}
-                placeholder="Max 28 chars"
-                maxLength={28}
-              />
-              {errors.memo && <p className="text-red-500 text-xs mt-1 animate-in slide-in-from-top-1">{errors.memo}</p>}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1">Notes (Optional)</label>
-            <textarea
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              rows={3}
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none"
-              placeholder="Thank you for your business!"
-            />
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-zinc-800">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:hover:bg-blue-600 text-white px-4 py-4 rounded-xl font-bold transition-all hover:shadow-lg hover:shadow-blue-500/20 active:scale-[0.98]"
-          >
-            {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : <span>Create Invoice</span>}
-          </button>
-        </div>
-      </form>
-    </div>
+          </Card>
+        </form>
+      </motion.div>
+    </motion.div>
   );
 }
