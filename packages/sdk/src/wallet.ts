@@ -1,5 +1,7 @@
 import { StrKey, Networks, rpc, TransactionBuilder, Account, xdr, Transaction } from '@stellar/stellar-sdk';
 
+declare const process: any;
+
 export function isValidAddress(address: string): boolean {
   try {
     return StrKey.isValidEd25519PublicKey(address) || StrKey.isValidContract(address);
