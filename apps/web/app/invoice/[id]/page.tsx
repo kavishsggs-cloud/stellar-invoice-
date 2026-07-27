@@ -23,7 +23,7 @@ export default function InvoicePage() {
   const { getTransactionUrl, getAccountUrl } = useExplorer();
   const [internalStep, setInternalStep] = useState(0);
 
-  const { data: invoice, isLoading, error: fetchError } = useInvoice(id);
+  const { data: invoice, isLoading, error: fetchError, refetch } = useInvoice(id);
 
   // Handle error messages
   useEffect(() => {
@@ -41,10 +41,11 @@ export default function InvoicePage() {
       setInternalStep(3); // Broadcasting transaction XDR
     } else if (status === "success") {
       setInternalStep(4); // Confirmed on-chain
+      refetch();
     } else if (status === "idle" || status === "error") {
       setInternalStep(0);
     }
-  }, [status, internalStep]);
+  }, [status, internalStep, refetch]);
 
   const handlePay = async () => {
     if (!invoice) return;
