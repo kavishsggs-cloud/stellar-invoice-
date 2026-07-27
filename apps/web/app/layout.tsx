@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { ErrorBoundary } from "../components/error-boundary";
 import { FeedbackWidget } from "../components/feedback";
 import { Onboarding } from "../components/onboarding";
+import { Background } from "../components/ui/Background";
 
 export const metadata: Metadata = {
   title: "Stellar Invoice",
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className={GeistSans.className} suppressHydrationWarning>
         <ErrorBoundary>
           <StellarProvider>
+            <Background />
             {children}
             <FeedbackWidget />
             <Onboarding />

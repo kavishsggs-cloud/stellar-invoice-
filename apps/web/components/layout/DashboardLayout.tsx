@@ -3,13 +3,15 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, PlusCircle, Settings, Menu, X, LogOut, Hexagon } from "lucide-react";
+import { LayoutDashboard, FileText, PlusCircle, Settings, Menu, X, LogOut, Hexagon, Bell, Shield } from "lucide-react";
 import { useWallet } from "../../hooks/useWallet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const pathname = usePathname();
   const { address, disconnect } = useWallet();
 
@@ -17,19 +19,20 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Invoices", href: "/invoices", icon: FileText },
     { name: "Create Invoice", href: "/invoices/create", icon: PlusCircle },
-    { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   const sidebarContent = (
-    <>
-      <div className="p-6 flex items-center space-x-3">
+    <div className="flex flex-col h-full bg-[#0B1728]/50 backdrop-blur-md">
+      {/* Brand logo container */}
+      <div className="p-6 flex items-center space-x-3 border-b border-white/5">
         <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary-cta shadow-[var(--shadow-premium-button)]">
-          <Hexagon className="h-6 w-6 text-white" strokeWidth={2.5} />
+          <Hexagon className="h-6 w-6 text-white animate-spin-slow" strokeWidth={2.5} />
         </div>
-        <span className="text-2xl font-bold tracking-tight text-text-primary">Stellar Invoice</span>
+        <span className="text-xl font-bold tracking-tight text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-text-secondary">Stellar Invoice</span>
       </div>
 
-      <nav className="flex-1 px-4 space-y-2 mt-4">
+      {/* Nav List */}
+      <nav className="flex-1 px-4 space-y-2 mt-6">
         {navigation.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
           const Icon = item.icon;
@@ -65,14 +68,15 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         })}
       </nav>
 
-      <div className="p-6">
-        <div className="glass-panel rounded-2xl p-4 flex flex-col space-y-3 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-glass-glow rounded-full blur-2xl opacity-50 -mr-10 -mt-10" />
+      {/* Bottom Profile Details */}
+      <div className="p-6 border-t border-white/5 bg-white/5">
+        <div className="glass-panel rounded-2xl p-4 flex flex-col space-y-3 relative overflow-hidden bg-slate-bg/50">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-glass-glow rounded-full blur-2xl opacity-50 -mr-10 -mt-10 pointer-events-none" />
           
-          <div className="relative z-10">
-            <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-1">Connected Wallet</p>
-            <p className="text-sm font-mono text-text-primary">
-              {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Not connected"}
+          <div className="relative z-10 space-y-1">
+            <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Active Address</p>
+            <p className="text-xs font-mono text-emerald truncate">
+              {address ? `${address.slice(0, 8)}...${address.slice(-6)}` : "Not connected"}
             </p>
           </div>
           
@@ -80,44 +84,90 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
             variant="ghost"
             size="sm"
             onClick={disconnect}
-            className="w-full justify-start px-0 text-danger hover:text-danger hover:bg-danger/10 mt-2 z-10"
+            className="w-full justify-start px-0 text-danger hover:text-danger hover:bg-danger/10 mt-2 z-10 text-xs"
           >
-            <LogOut size={16} />
-            <span>Disconnect</span>
+            <LogOut size={14} className="mr-1.5" />
+            <span>Disconnect Wallet</span>
           </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-midnight-navy text-text-primary selection:bg-stellar-blue selection:text-white">
+    <div className="flex h-screen overflow-hidden bg-[#06121F] text-text-primary selection:bg-stellar-blue selection:text-white relative">
+      
       {/* Sidebar for Desktop */}
-      <div className="hidden md:flex w-72 flex-col glass-panel border-y-0 border-l-0 rounded-none z-10">
+      <div className="hidden md:flex w-72 flex-col border-r border-white/5 z-20">
         {sidebarContent}
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col relative overflow-hidden">
+      <div className="flex-1 flex flex-col relative overflow-hidden z-10">
         
-        {/* Abstract Background Elements */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-stellar-blue/10 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-premium/10 blur-[120px] pointer-events-none" />
-
-        {/* Mobile Header */}
-        <header className="md:hidden flex items-center justify-between p-4 glass-panel border-x-0 border-t-0 rounded-none z-30">
-          <div className="flex items-center space-x-3">
+        {/* Universal Topbar */}
+        <header className="flex items-center justify-between px-6 sm:px-8 py-4 border-b border-white/5 bg-[#0B1728]/30 backdrop-blur-md z-30">
+          
+          {/* Mobile hamburger logo */}
+          <div className="flex items-center space-x-3 md:hidden">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-cta">
               <Hexagon className="h-5 w-5 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-lg font-bold tracking-tight text-white">Stellar Invoice</span>
+            <span className="text-base font-bold tracking-tight text-white">Stellar Invoice</span>
           </div>
-          <button
-            className="text-text-secondary hover:text-white focus:outline-none transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+
+          {/* Desktop page path display */}
+          <div className="hidden md:flex items-center space-x-2 text-xs font-mono text-text-muted">
+            <span>workspace</span>
+            <span>/</span>
+            <span className="text-stellar-blue font-semibold">{pathname.split("/").filter(Boolean).join(" / ") || "home"}</span>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            {/* Ledger status tag */}
+            <div className="hidden sm:flex items-center space-x-2 bg-white/5 border border-white/10 px-3 py-1 rounded-xl text-xs text-text-secondary font-mono">
+              <Shield size={12} className="text-emerald animate-pulse" />
+              <span>Soroban Node: Online</span>
+            </div>
+
+            {/* Notification trigger */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className="p-2 bg-white/5 border border-white/10 hover:bg-white/10 rounded-xl transition-all focus:outline-none"
+              >
+                <Bell size={16} className="text-text-secondary hover:text-white" />
+              </button>
+
+              <AnimatePresence>
+                {isNotificationsOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 mt-2 w-72 bg-[#132238] border border-white/10 rounded-2xl p-4 shadow-2xl z-50 space-y-3"
+                  >
+                    <h4 className="font-bold text-sm text-white">Ledger Notifications</h4>
+                    <div className="h-px bg-white/5" />
+                    <div className="space-y-2 text-xs text-text-secondary font-light">
+                      <div className="p-2 bg-white/5 rounded-lg border border-white/5">
+                        <p className="font-semibold text-white">Network Check</p>
+                        <p className="text-[10px] text-text-muted mt-0.5">Connected to Soroban Testnet network.</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Mobile menu hamburger button */}
+            <button
+              className="md:hidden text-text-secondary hover:text-white focus:outline-none transition-colors p-2 bg-white/5 border border-white/10 rounded-xl"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </header>
 
         {/* Mobile Menu Overlay */}
@@ -128,7 +178,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
-              className="md:hidden absolute inset-0 z-20 glass-panel backdrop-blur-2xl pt-20 flex flex-col"
+              className="md:hidden absolute inset-0 z-20 pt-16 flex flex-col bg-[#06121F]/95 backdrop-blur-2xl"
             >
               {sidebarContent}
             </motion.div>
@@ -136,11 +186,11 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
         </AnimatePresence>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 relative z-10">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.3 }}
             className="h-full max-w-6xl mx-auto"
           >
             {children}
@@ -150,4 +200,3 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
     </div>
   );
 };
-
