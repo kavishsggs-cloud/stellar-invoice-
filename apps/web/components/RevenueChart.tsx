@@ -6,7 +6,6 @@ import { Invoice, InvoiceStatus } from "@repo/sdk";
 
 export default function RevenueChart({ invoices }: { invoices: Invoice[] }) {
   const chartData = useMemo(() => {
-    // Generate last 7 days data
     const data: Record<string, number> = {};
     const now = new Date();
     
@@ -18,7 +17,6 @@ export default function RevenueChart({ invoices }: { invoices: Invoice[] }) {
     }
 
     invoices.forEach(inv => {
-      // Only count paid invoices for revenue
       if (inv.status === InvoiceStatus.Paid) {
         const d = new Date(Number(inv.updatedAt));
         const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -35,38 +33,45 @@ export default function RevenueChart({ invoices }: { invoices: Invoice[] }) {
   }, [invoices]);
 
   return (
-    <div className="h-[300px] w-full">
+    <div className="h-[280px] w-full pt-2">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={chartData}
           margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
         >
           <defs>
-            <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#08B5E5" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="#08B5E5" stopOpacity={0} />
+            <linearGradient id="colorRevenueGlow" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#08B5E5" stopOpacity={0.45} />
+              <stop offset="50%" stopColor="#14D9C4" stopOpacity={0.15} />
+              <stop offset="100%" stopColor="#08B5E5" stopOpacity={0.0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
           <XAxis 
             dataKey="date" 
-            stroke="#6F8097"
-            fontSize={12}
+            stroke="#70839B"
+            fontSize={11}
             tickLine={false}
             axisLine={false}
           />
           <YAxis 
-            stroke="#6F8097"
-            fontSize={12}
+            stroke="#70839B"
+            fontSize={11}
             tickLine={false}
             axisLine={false}
             tickFormatter={(value) => `${value}`}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: '#132238', borderColor: 'rgba(255,255,255,0.08)', borderRadius: '16px', backdropFilter: 'blur(10px)' }}
-            itemStyle={{ color: '#08B5E5', fontWeight: 600 }}
+            contentStyle={{ 
+              backgroundColor: '#132238', 
+              borderColor: 'rgba(255,255,255,0.12)', 
+              borderRadius: '16px', 
+              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(16px)' 
+            }}
+            itemStyle={{ color: '#08B5E5', fontWeight: 700, fontSize: '13px' }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            formatter={(value: any) => [`${Number(value).toFixed(2)} XLM`, 'Revenue']}
+            formatter={(value: any) => [`${Number(value).toFixed(2)} XLM`, 'Settled Revenue']}
           />
           <Area
             type="monotone"
@@ -74,7 +79,7 @@ export default function RevenueChart({ invoices }: { invoices: Invoice[] }) {
             stroke="#08B5E5"
             strokeWidth={3}
             fillOpacity={1}
-            fill="url(#colorAmount)"
+            fill="url(#colorRevenueGlow)"
           />
         </AreaChart>
       </ResponsiveContainer>
