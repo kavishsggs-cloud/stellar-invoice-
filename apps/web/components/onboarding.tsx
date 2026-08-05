@@ -7,19 +7,19 @@ import { Button } from "./ui/button";
 
 const ONBOARDING_STEPS = [
   {
-    title: "Connect Freighter Wallet",
-    description: "Start by connecting your non-custodial Stellar wallet to sign cryptographic ledger transactions.",
-    icon: <Wallet className="text-stellar-blue w-12 h-12 mb-4" />
+    title: "Connect Stellar Wallet",
+    description: "Start by connecting your non-custodial Stellar wallet (Freighter, xBull, or Albedo) to sign cryptographic ledger transactions.",
+    icon: <Wallet className="text-[#cbfffc] w-12 h-12 mb-4" />
   },
   {
-    title: "Issue Blockchain Invoice",
-    description: "Draft an invoice with client coordinates and amount in XLM or USDC. Terms are locked on-chain.",
-    icon: <FileText className="text-emerald w-12 h-12 mb-4" />
+    title: "Issue Soroban Invoice",
+    description: "Draft an invoice with client coordinates and amount in XLM or USDC. Terms are locked on-chain in smart contracts.",
+    icon: <FileText className="text-[#edfffe] w-12 h-12 mb-4" />
   },
   {
     title: "Share & Instant Settle",
     description: "Distribute your public payment link. Clients scan the SEP-0007 QR code or pay with one click.",
-    icon: <Share2 className="text-premium w-12 h-12 mb-4" />
+    icon: <Share2 className="text-[#fde9ff] w-12 h-12 mb-4" />
   }
 ];
 
@@ -59,31 +59,31 @@ export function Onboarding() {
   if (!step) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#011d1c]/90 backdrop-blur-md px-4">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="glass-panel bg-[#132238]/95 border border-white/10 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden backdrop-blur-2xl"
+        className="bg-[#003734] border border-[#cbfffc]/20 rounded-[16px] w-full max-w-lg shadow-none overflow-hidden"
       >
-        <div className="flex justify-between items-center p-6 border-b border-white/5 bg-white/5">
-          <div className="flex space-x-1.5">
+        <div className="flex justify-between items-center p-6 border-b border-[#cbfffc]/10 bg-[#012624]">
+          <div className="flex space-x-2">
             {ONBOARDING_STEPS.map((_, i) => (
               <div 
                 key={i} 
-                className={`h-1.5 w-8 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-[3px] transition-all duration-300 ${
                   i === currentStep 
-                    ? 'bg-primary-cta w-12' 
+                    ? 'bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] w-12' 
                     : i < currentStep 
-                    ? 'bg-stellar-blue/50' 
-                    : 'bg-white/10'
+                    ? 'bg-[#00827c] w-8' 
+                    : 'bg-[#cbfffc]/10 w-8'
                 }`}
               />
             ))}
           </div>
           <button 
             onClick={handleClose}
-            className="text-text-muted hover:text-white transition-colors p-1"
+            className="text-[#bbc7c6] hover:text-[#ffffff] transition-colors p-1"
           >
             <X size={18} />
           </button>
@@ -100,31 +100,31 @@ export function Onboarding() {
               className="flex flex-col items-center"
             >
               {step.icon}
-              <h2 className="text-2xl font-bold text-white mb-3">{step.title}</h2>
-              <p className="text-text-secondary font-light text-sm max-w-sm leading-relaxed">{step.description}</p>
+              <h2 className="text-2xl font-medium text-[#ffffff] mb-3">{step.title}</h2>
+              <p className="text-[#bbc7c6] font-normal text-sm max-w-sm leading-[1.4]">{step.description}</p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="p-5 border-t border-white/5 bg-white/5 flex justify-between items-center">
+        <div className="p-5 border-t border-[#cbfffc]/10 bg-[#012624] flex justify-between items-center">
           <button
             onClick={prevStep}
             disabled={currentStep === 0}
-            className="p-2 text-text-muted hover:text-white disabled:opacity-0 transition-all"
+            className="p-2 text-[#bbc7c6] hover:text-[#ffffff] disabled:opacity-0 transition-all"
           >
             <ChevronLeft size={20} />
           </button>
           
           <Button
             onClick={nextStep}
-            size="md"
-            className="shadow-[var(--shadow-premium-button)] text-xs font-bold"
+            className="bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0"
           >
             <span>{currentStep === ONBOARDING_STEPS.length - 1 ? 'Get Started' : 'Next Step'}</span>
-            {currentStep < ONBOARDING_STEPS.length - 1 && <ChevronRight size={14} className="ml-1" />}
+            {currentStep < ONBOARDING_STEPS.length - 1 && <ChevronRight size={14} className="ml-1 inline" />}
           </Button>
         </div>
       </motion.div>
     </div>
   );
 }
+
