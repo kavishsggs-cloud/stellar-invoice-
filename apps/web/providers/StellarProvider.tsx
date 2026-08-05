@@ -11,6 +11,7 @@ import { defaultModules } from "@creit.tech/stellar-wallets-kit/modules/utils";
 // Default modules enables all standard wallets.
 export interface StellarContextType {
   address: string | null;
+  isConnected: boolean;
   isConnecting: boolean;
   error: string | null;
   connect: () => Promise<void>;
@@ -20,6 +21,7 @@ export interface StellarContextType {
 
 const StellarContext = createContext<StellarContextType>({
   address: null,
+  isConnected: false,
   isConnecting: false,
   error: null,
   connect: async () => {},
@@ -95,7 +97,7 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <StellarContext.Provider value={{ address, isConnecting, error, connect, disconnect, signTransaction }}>
+    <StellarContext.Provider value={{ address, isConnected: Boolean(address), isConnecting, error, connect, disconnect, signTransaction }}>
       {children}
     </StellarContext.Provider>
   );

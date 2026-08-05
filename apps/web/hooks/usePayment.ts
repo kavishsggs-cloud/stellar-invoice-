@@ -50,10 +50,15 @@ export const usePayment = () => {
         throw new Error(`Transaction failed: ${result.status}`);
       }
     } catch (e: unknown) {
-      console.error(e);
       if (e instanceof Error) {
-        setError(e.message || "Payment failed");
+        if (e.message.includes("User rejected") || e.message.includes("rejected")) {
+          setError("Transaction cancelled by wallet user");
+        } else {
+          console.error("Payment error:", e);
+          setError(e.message || "Payment failed");
+        }
       } else {
+        console.error("Payment error:", e);
         setError("Payment failed");
       }
       setStatus("error");
