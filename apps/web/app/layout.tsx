@@ -25,7 +25,9 @@ export default function RootLayout({
         <ErrorBoundary>
           <StellarProvider>
             <Background />
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
             <FeedbackWidget />
             <Onboarding />
             <Toaster theme="dark" position="bottom-right" />

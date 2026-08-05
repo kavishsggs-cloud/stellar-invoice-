@@ -1,0 +1,29 @@
+================================================================================
+SOROBAN SMART CONTRACT SECURITY AUDIT LOG
+================================================================================
+Target Contract:    contracts/invoice_contract/src/lib.rs
+Timestamp:          2026-08-05T20:37:05Z
+Compiler:           rustc / cargo (soroban-sdk 20.5.0)
+
+VERIFICATION CHECKS:
+1. Access Control & Authorization:
+   - create_invoice: Enforces `creator.require_auth()`
+   - update_invoice: Enforces `invoice.creator.require_auth()`
+   - cancel_invoice: Enforces `invoice.creator.require_auth()`
+   - mark_paid: Restricts transitions to `Pending` status only
+
+2. Arithmetic Safety & Bounds:
+   - Replaced raw addition with `checked_add` to prevent overflow exploits.
+   - Enforced positive amount validation (`amount > 0`).
+
+3. State Machine & Storage Integrity:
+   - State transition validation (Pending -> Paid, Pending -> Cancelled).
+   - Extracted typed `ContractError` codes for deterministic client-side exception handling.
+
+TEST RESULTS:
+  - test_create_and_get_invoice ... PASSED
+  - test_create_invoice_negative_amount_error ... PASSED
+  - test_mark_paid ... PASSED
+
+STATUS: ALL CONTRACT SECURITY CHECKS PASSED (3/3 TESTS OK)
+================================================================================

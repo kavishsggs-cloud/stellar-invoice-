@@ -29,9 +29,33 @@ export const RPC_URL =
   "https://soroban-testnet.stellar.org:443";
 export const CONTRACT_ID =
   (typeof process !== "undefined" && process.env.NEXT_PUBLIC_CONTRACT_ID) ||
-  "CBPNGAIA64YE7TEQIBWYVQPMOFITNK3LRXZVPATUJA63PR364KNCTVEO";
+  "CAKQKXMLUDZ2QJFSKUVOE3TZLKQWA3KOQYJ7EG73YKPSMJ4U5YZSO5TW";
 
 export const server = new rpc.Server(RPC_URL);
+
+/**
+ * Executes an async RPC operation with exponential backoff retry logic.
+ */
+export async function executeWithRetry<T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  baseDelayMs = 1000,
+): Promise<T> {
+  let attempt = 0;
+  while (true) {
+    try {
+      return await fn();
+    } catch (err) {
+      attempt++;
+      if (attempt > retries) {
+        throw err;
+      }
+      const delay = baseDelayMs * Math.pow(2, attempt - 1);
+      console.warn(`[RPC Retry] Attempt ${attempt}/${retries} failed. Retrying in ${delay}ms...`, err);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
 
 export async function buildContractTransaction(
   source: string,
@@ -39,7 +63,7 @@ export async function buildContractTransaction(
 ) {
   let sourceAccount;
   try {
-    sourceAccount = await server.getAccount(source);
+    sourceAccount = await executeWithRetry(() => server.getAccount(source));
   } catch {
     sourceAccount = new Account(source, "1");
   }
@@ -52,7 +76,7 @@ export async function buildContractTransaction(
     .setTimeout(30)
     .build();
 
-  const preparedTx = await server.prepareTransaction(tx);
+  const preparedTx = await executeWithRetry(() => server.prepareTransaction(tx));
   return preparedTx.toXDR();
 }
 
@@ -69,7 +93,7 @@ export async function simulateContractCall(
     .setTimeout(30)
     .build();
 
-  const simResult = await server.simulateTransaction(tx);
+  const simResult = await executeWithRetry(() => server.simulateTransaction(tx));
   if (rpc.Api.isSimulationError(simResult)) {
     throw new Error(simResult.error);
   }
@@ -85,7 +109,7 @@ export async function submitTransaction(txXdr: string) {
       txXdr,
       NETWORK_PASSPHRASE,
     ) as Transaction;
-    const sendResponse = await server.sendTransaction(tx);
+    const sendResponse = await executeWithRetry(() => server.sendTransaction(tx));
     if (sendResponse.status === "ERROR") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const errRes = sendResponse as any;
@@ -94,11 +118,11 @@ export async function submitTransaction(txXdr: string) {
       );
     }
     if (sendResponse.status === "PENDING") {
-      let txResponse = await server.getTransaction(sendResponse.hash);
+      let txResponse = await executeWithRetry(() => server.getTransaction(sendResponse.hash));
       let attempts = 0;
       while (txResponse.status === "NOT_FOUND" && attempts < 10) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        txResponse = await server.getTransaction(sendResponse.hash);
+        txResponse = await executeWithRetry(() => server.getTransaction(sendResponse.hash));
         attempts++;
       }
       if (txResponse.status === "SUCCESS") {
@@ -114,3 +138,4 @@ export async function submitTransaction(txXdr: string) {
     throw e;
   }
 }
+
