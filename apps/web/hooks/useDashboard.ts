@@ -11,11 +11,20 @@ export const useDashboard = () => {
     if (!invoices) return null;
 
     const totalInvoices = invoices.length;
-    const paidInvoices = invoices.filter(i => i.status === InvoiceStatus.Paid);
-    const pendingInvoices = invoices.filter(i => i.status === InvoiceStatus.Pending);
-    const cancelledInvoices = invoices.filter(i => i.status === InvoiceStatus.Cancelled);
+    const paidInvoices = invoices.filter(
+      (i) => i.status === InvoiceStatus.Paid,
+    );
+    const pendingInvoices = invoices.filter(
+      (i) => i.status === InvoiceStatus.Pending,
+    );
+    const cancelledInvoices = invoices.filter(
+      (i) => i.status === InvoiceStatus.Cancelled,
+    );
 
-    const totalRevenue = paidInvoices.reduce((acc, curr) => acc + Number(curr.amount) / 10000000, 0);
+    const totalRevenue = paidInvoices.reduce(
+      (acc, curr) => acc + Number(curr.amount) / 10000000,
+      0,
+    );
 
     return {
       totalInvoices,

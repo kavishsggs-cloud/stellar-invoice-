@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { Invoice, InvoiceContractAPI, CONTRACT_ID, simulateContractCall } from "@repo/sdk";
+import {
+  Invoice,
+  InvoiceContractAPI,
+  CONTRACT_ID,
+  simulateContractCall,
+} from "@repo/sdk";
 
 export const useInvoices = (address?: string | null) => {
   const [data, setData] = useState<Invoice[]>([]);
@@ -15,14 +20,20 @@ export const useInvoices = (address?: string | null) => {
     setIsLoading(true);
     try {
       const api = new InvoiceContractAPI(CONTRACT_ID);
-      const callData = api.getCallData("list_invoices", api.listInvoicesArgs(address));
-      
+      const callData = api.getCallData(
+        "list_invoices",
+        api.listInvoicesArgs(address),
+      );
+
       try {
         const resultVal = await simulateContractCall(address, callData);
         const parsed = api.parseInvoiceList(resultVal);
         setData(parsed);
       } catch (simError) {
-        console.warn("Contract simulation failed, maybe not deployed?", simError);
+        console.warn(
+          "Contract simulation failed, maybe not deployed?",
+          simError,
+        );
         setData([]);
       }
     } catch (e) {

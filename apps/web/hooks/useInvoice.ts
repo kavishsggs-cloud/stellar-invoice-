@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { Invoice, InvoiceContractAPI, CONTRACT_ID, simulateContractCall } from "@repo/sdk";
+import {
+  Invoice,
+  InvoiceContractAPI,
+  CONTRACT_ID,
+  simulateContractCall,
+} from "@repo/sdk";
 
 export const useInvoice = (id: string | null) => {
   const [data, setData] = useState<Invoice | null>(null);
@@ -17,15 +22,22 @@ export const useInvoice = (id: string | null) => {
     setError(null);
     try {
       const api = new InvoiceContractAPI(CONTRACT_ID);
-      const callData = api.getCallData("get_invoice", api.getInvoiceArgs(BigInt(id)));
-      
+      const callData = api.getCallData(
+        "get_invoice",
+        api.getInvoiceArgs(BigInt(id)),
+      );
+
       try {
-        const dummySource = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
+        const dummySource =
+          "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
         const resultVal = await simulateContractCall(dummySource, callData);
         const parsed = api.parseInvoice(resultVal);
         setData(parsed);
       } catch (simError) {
-        console.warn("Contract simulation failed, maybe not deployed or invoice not found?", simError);
+        console.warn(
+          "Contract simulation failed, maybe not deployed or invoice not found?",
+          simError,
+        );
         setError("Invoice not found or contract not deployed");
       }
     } catch (e) {

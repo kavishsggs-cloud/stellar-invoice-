@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, X, Send, CheckCircle2, Loader2, Star } from "lucide-react";
+import {
+  MessageSquare,
+  X,
+  Send,
+  CheckCircle2,
+  Loader2,
+  Star,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 
@@ -23,7 +30,11 @@ export function FeedbackWidget() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: feedback, rating, event: "user_feedback_submitted" }),
+        body: JSON.stringify({
+          message: feedback,
+          rating,
+          event: "user_feedback_submitted",
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to submit feedback");
@@ -55,7 +66,9 @@ export function FeedbackWidget() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
         className={`fixed bottom-6 right-6 z-40 bg-[#003734] border border-[#cbfffc]/20 text-[#ffffff] p-4 rounded-[6px] backdrop-blur-md transition-all shadow-none ${
-          isOpen ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100 translate-y-0'
+          isOpen
+            ? "opacity-0 pointer-events-none translate-y-4"
+            : "opacity-100 translate-y-0"
         }`}
         aria-label="Send Feedback"
       >
@@ -65,7 +78,7 @@ export function FeedbackWidget() {
       {/* Auros Themed Feedback Modal */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -109,7 +122,9 @@ export function FeedbackWidget() {
               {isSuccess ? (
                 <div className="flex flex-col items-center justify-center py-6 space-y-3">
                   <CheckCircle2 className="text-[#cbfffc]" size={36} />
-                  <p className="font-medium text-[#ffffff] text-sm">Rating & Feedback Logged!</p>
+                  <p className="font-medium text-[#ffffff] text-sm">
+                    Rating & Feedback Logged!
+                  </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -157,8 +172,14 @@ export function FeedbackWidget() {
                       disabled={isSubmitting || !feedback.trim()}
                       className="bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0"
                     >
-                      {isSubmitting ? <Loader2 className="animate-spin mr-1.5" size={14} /> : <Send size={14} className="mr-1.5 inline" />}
-                      <span>{isSubmitting ? 'Submitting...' : 'Submit Feedback'}</span>
+                      {isSubmitting ? (
+                        <Loader2 className="animate-spin mr-1.5" size={14} />
+                      ) : (
+                        <Send size={14} className="mr-1.5 inline" />
+                      )}
+                      <span>
+                        {isSubmitting ? "Submitting..." : "Submit Feedback"}
+                      </span>
                     </Button>
                   </div>
                 </form>
@@ -170,4 +191,3 @@ export function FeedbackWidget() {
     </>
   );
 }
-

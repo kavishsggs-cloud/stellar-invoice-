@@ -28,9 +28,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   const arrowStyles = {
     top: "top-full left-1/2 -translate-x-1/2 border-t-[#132238] border-x-transparent border-b-transparent",
-    bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-[#132238] border-x-transparent border-t-transparent",
+    bottom:
+      "bottom-full left-1/2 -translate-x-1/2 border-b-[#132238] border-x-transparent border-t-transparent",
     left: "left-full top-1/2 -translate-y-1/2 border-l-[#132238] border-y-transparent border-r-transparent",
-    right: "right-full top-1/2 -translate-y-1/2 border-r-[#132238] border-y-transparent border-l-transparent",
+    right:
+      "right-full top-1/2 -translate-y-1/2 border-r-[#132238] border-y-transparent border-l-transparent",
   };
 
   return (
@@ -45,7 +47,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
       <AnimatePresence>
         {active && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: position === "top" ? 4 : position === "bottom" ? -4 : 0 }}
+            initial={{
+              opacity: 0,
+              scale: 0.95,
+              y: position === "top" ? 4 : position === "bottom" ? -4 : 0,
+            }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.15, ease: "easeOut" }}

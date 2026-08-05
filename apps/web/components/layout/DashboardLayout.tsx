@@ -3,13 +3,28 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, PlusCircle, Settings, Menu, X, LogOut, Hexagon, Bell, Shield } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileText,
+  PlusCircle,
+  Settings,
+  Menu,
+  X,
+  LogOut,
+  Hexagon,
+  Bell,
+  Shield,
+} from "lucide-react";
 import { useWallet } from "../../hooks/useWallet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 
-export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+export const DashboardLayout = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const pathname = usePathname();
@@ -26,15 +41,21 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       {/* Brand logo container */}
       <div className="p-6 flex items-center space-x-3 border-b border-white/5">
         <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary-cta shadow-[var(--shadow-premium-button)]">
-          <Hexagon className="h-6 w-6 text-white animate-spin-slow" strokeWidth={2.5} />
+          <Hexagon
+            className="h-6 w-6 text-white animate-spin-slow"
+            strokeWidth={2.5}
+          />
         </div>
-        <span className="text-xl font-bold tracking-tight text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-text-secondary">Stellar Invoice</span>
+        <span className="text-xl font-bold tracking-tight text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-text-secondary">
+          Stellar Invoice
+        </span>
       </div>
 
       {/* Nav List */}
       <nav className="flex-1 px-4 space-y-2 mt-6">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+          const isActive =
+            pathname === item.href || pathname.startsWith(item.href + "/");
           const Icon = item.icon;
           return (
             <Link
@@ -61,7 +82,9 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
                   />
                 )}
                 <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-                <span className={isActive ? "font-semibold" : "font-medium"}>{item.name}</span>
+                <span className={isActive ? "font-semibold" : "font-medium"}>
+                  {item.name}
+                </span>
               </motion.div>
             </Link>
           );
@@ -72,14 +95,18 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
       <div className="p-6 border-t border-white/5 bg-white/5">
         <div className="glass-panel rounded-2xl p-4 flex flex-col space-y-3 relative overflow-hidden bg-slate-bg/50">
           <div className="absolute top-0 right-0 w-24 h-24 bg-glass-glow rounded-full blur-2xl opacity-50 -mr-10 -mt-10 pointer-events-none" />
-          
+
           <div className="relative z-10 space-y-1">
-            <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Active Address</p>
+            <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+              Active Address
+            </p>
             <p className="text-xs font-mono text-emerald truncate">
-              {address ? `${address.slice(0, 8)}...${address.slice(-6)}` : "Not connected"}
+              {address
+                ? `${address.slice(0, 8)}...${address.slice(-6)}`
+                : "Not connected"}
             </p>
           </div>
-          
+
           <Button
             variant="ghost"
             size="sm"
@@ -96,7 +123,6 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#06121F] text-text-primary selection:bg-stellar-blue selection:text-white relative">
-      
       {/* Sidebar for Desktop */}
       <div className="hidden md:flex w-72 flex-col border-r border-white/5 z-20">
         {sidebarContent}
@@ -104,23 +130,25 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col relative overflow-hidden z-10">
-        
         {/* Universal Topbar */}
         <header className="flex items-center justify-between px-6 sm:px-8 py-4 border-b border-white/5 bg-[#0B1728]/30 backdrop-blur-md z-30">
-          
           {/* Mobile hamburger logo */}
           <div className="flex items-center space-x-3 md:hidden">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-cta">
               <Hexagon className="h-5 w-5 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-base font-bold tracking-tight text-white">Stellar Invoice</span>
+            <span className="text-base font-bold tracking-tight text-white">
+              Stellar Invoice
+            </span>
           </div>
 
           {/* Desktop page path display */}
           <div className="hidden md:flex items-center space-x-2 text-xs font-mono text-text-muted">
             <span>workspace</span>
             <span>/</span>
-            <span className="text-stellar-blue font-semibold">{pathname.split("/").filter(Boolean).join(" / ") || "home"}</span>
+            <span className="text-stellar-blue font-semibold">
+              {pathname.split("/").filter(Boolean).join(" / ") || "home"}
+            </span>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -132,11 +160,14 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
             {/* Notification trigger */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                 className="p-2 bg-white/5 border border-white/10 hover:bg-white/10 rounded-xl transition-all focus:outline-none"
               >
-                <Bell size={16} className="text-text-secondary hover:text-white" />
+                <Bell
+                  size={16}
+                  className="text-text-secondary hover:text-white"
+                />
               </button>
 
               <AnimatePresence>
@@ -147,12 +178,18 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     className="absolute right-0 mt-2 w-72 bg-[#132238] border border-white/10 rounded-2xl p-4 shadow-2xl z-50 space-y-3"
                   >
-                    <h4 className="font-bold text-sm text-white">Ledger Notifications</h4>
+                    <h4 className="font-bold text-sm text-white">
+                      Ledger Notifications
+                    </h4>
                     <div className="h-px bg-white/5" />
                     <div className="space-y-2 text-xs text-text-secondary font-light">
                       <div className="p-2 bg-white/5 rounded-lg border border-white/5">
-                        <p className="font-semibold text-white">Network Check</p>
-                        <p className="text-[10px] text-text-muted mt-0.5">Connected to Soroban Testnet network.</p>
+                        <p className="font-semibold text-white">
+                          Network Check
+                        </p>
+                        <p className="text-[10px] text-text-muted mt-0.5">
+                          Connected to Soroban Testnet network.
+                        </p>
                       </div>
                     </div>
                   </motion.div>

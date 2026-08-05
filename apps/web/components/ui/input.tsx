@@ -19,12 +19,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ? "border-danger focus:ring-danger/30"
             : "border-white/10 focus:ring-stellar-blue/30",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          className
+          className,
         )}
         ref={ref}
         {...props}
       />
     );
-  }
+  },
 );
 Input.displayName = "Input";

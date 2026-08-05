@@ -1,26 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Wallet, FileText, Share2, ChevronRight, ChevronLeft } from "lucide-react";
+import {
+  X,
+  Wallet,
+  FileText,
+  Share2,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./ui/button";
 
 const ONBOARDING_STEPS = [
   {
     title: "Connect Stellar Wallet",
-    description: "Start by connecting your non-custodial Stellar wallet (Freighter, xBull, or Albedo) to sign cryptographic ledger transactions.",
-    icon: <Wallet className="text-[#cbfffc] w-12 h-12 mb-4" />
+    description:
+      "Start by connecting your non-custodial Stellar wallet (Freighter, xBull, or Albedo) to sign cryptographic ledger transactions.",
+    icon: <Wallet className="text-[#cbfffc] w-12 h-12 mb-4" />,
   },
   {
     title: "Issue Soroban Invoice",
-    description: "Draft an invoice with client coordinates and amount in XLM or USDC. Terms are locked on-chain in smart contracts.",
-    icon: <FileText className="text-[#edfffe] w-12 h-12 mb-4" />
+    description:
+      "Draft an invoice with client coordinates and amount in XLM or USDC. Terms are locked on-chain in smart contracts.",
+    icon: <FileText className="text-[#edfffe] w-12 h-12 mb-4" />,
   },
   {
     title: "Share & Instant Settle",
-    description: "Distribute your public payment link. Clients scan the SEP-0007 QR code or pay with one click.",
-    icon: <Share2 className="text-[#fde9ff] w-12 h-12 mb-4" />
-  }
+    description:
+      "Distribute your public payment link. Clients scan the SEP-0007 QR code or pay with one click.",
+    icon: <Share2 className="text-[#fde9ff] w-12 h-12 mb-4" />,
+  },
 ];
 
 export function Onboarding() {
@@ -28,7 +38,9 @@ export function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    const hasSeenOnboarding = localStorage.getItem("stellar_invoice_onboarding_completed");
+    const hasSeenOnboarding = localStorage.getItem(
+      "stellar_invoice_onboarding_completed",
+    );
     if (!hasSeenOnboarding) {
       setIsVisible(true);
     }
@@ -60,7 +72,7 @@ export function Onboarding() {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#011d1c]/90 backdrop-blur-md px-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
@@ -69,19 +81,19 @@ export function Onboarding() {
         <div className="flex justify-between items-center p-6 border-b border-[#cbfffc]/10 bg-[#012624]">
           <div className="flex space-x-2">
             {ONBOARDING_STEPS.map((_, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={`h-1.5 rounded-[3px] transition-all duration-300 ${
-                  i === currentStep 
-                    ? 'bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] w-12' 
-                    : i < currentStep 
-                    ? 'bg-[#00827c] w-8' 
-                    : 'bg-[#cbfffc]/10 w-8'
+                  i === currentStep
+                    ? "bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] w-12"
+                    : i < currentStep
+                      ? "bg-[#00827c] w-8"
+                      : "bg-[#cbfffc]/10 w-8"
                 }`}
               />
             ))}
           </div>
-          <button 
+          <button
             onClick={handleClose}
             className="text-[#bbc7c6] hover:text-[#ffffff] transition-colors p-1"
           >
@@ -100,8 +112,12 @@ export function Onboarding() {
               className="flex flex-col items-center"
             >
               {step.icon}
-              <h2 className="text-2xl font-medium text-[#ffffff] mb-3">{step.title}</h2>
-              <p className="text-[#bbc7c6] font-normal text-sm max-w-sm leading-[1.4]">{step.description}</p>
+              <h2 className="text-2xl font-medium text-[#ffffff] mb-3">
+                {step.title}
+              </h2>
+              <p className="text-[#bbc7c6] font-normal text-sm max-w-sm leading-[1.4]">
+                {step.description}
+              </p>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -114,17 +130,22 @@ export function Onboarding() {
           >
             <ChevronLeft size={20} />
           </button>
-          
+
           <Button
             onClick={nextStep}
             className="bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0"
           >
-            <span>{currentStep === ONBOARDING_STEPS.length - 1 ? 'Get Started' : 'Next Step'}</span>
-            {currentStep < ONBOARDING_STEPS.length - 1 && <ChevronRight size={14} className="ml-1 inline" />}
+            <span>
+              {currentStep === ONBOARDING_STEPS.length - 1
+                ? "Get Started"
+                : "Next Step"}
+            </span>
+            {currentStep < ONBOARDING_STEPS.length - 1 && (
+              <ChevronRight size={14} className="ml-1 inline" />
+            )}
           </Button>
         </div>
       </motion.div>
     </div>
   );
 }
-

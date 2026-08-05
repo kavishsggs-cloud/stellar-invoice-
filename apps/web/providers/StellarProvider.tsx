@@ -1,10 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import {
-  StellarWalletsKit,
-  Networks,
-} from "@creit.tech/stellar-wallets-kit";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { StellarWalletsKit, Networks } from "@creit.tech/stellar-wallets-kit";
 import { FREIGHTER_ID } from "@creit.tech/stellar-wallets-kit/modules/freighter";
 import { defaultModules } from "@creit.tech/stellar-wallets-kit/modules/utils";
 
@@ -46,7 +49,7 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
       try {
         const storedAddress = localStorage.getItem("stellar_address");
         const storedWalletId = localStorage.getItem("stellar_wallet_id");
-        
+
         if (storedAddress && storedWalletId) {
           StellarWalletsKit.setWallet(storedWalletId);
           setAddress(storedAddress);
@@ -97,7 +100,17 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <StellarContext.Provider value={{ address, isConnected: Boolean(address), isConnecting, error, connect, disconnect, signTransaction }}>
+    <StellarContext.Provider
+      value={{
+        address,
+        isConnected: Boolean(address),
+        isConnecting,
+        error,
+        connect,
+        disconnect,
+        signTransaction,
+      }}
+    >
       {children}
     </StellarContext.Provider>
   );

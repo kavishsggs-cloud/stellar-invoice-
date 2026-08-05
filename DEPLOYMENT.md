@@ -47,5 +47,6 @@
 6. Click **Deploy**!
 
 ### Current Deployed Contract (Testnet)
+
 - **Contract ID**: `CBPNGAIA64YE7TEQIBWYVQPMOFITNK3LRXZVPATUJA63PR364KNCTVEO`
 - **Transaction Hash**: `cf9c0a6627d3457492f2fe3fe34e1420149de58e7a7f47a559e3ac6ffb17c0ea`

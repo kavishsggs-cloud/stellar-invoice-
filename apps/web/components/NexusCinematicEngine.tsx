@@ -7,7 +7,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { useWallet } from "../hooks/useWallet";
 import { Button } from "./ui/button";
-import { ArrowUpRight, Hexagon, ShieldCheck, Zap, Lock, Globe, Cpu, Sparkles, ArrowRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  Hexagon,
+  ShieldCheck,
+  Zap,
+  Lock,
+  Globe,
+  Cpu,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
 
 export default function NexusCinematicEngine() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -28,7 +38,7 @@ export default function NexusCinematicEngine() {
       60,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      1000,
     );
     camera.position.z = 5;
 
@@ -64,7 +74,8 @@ export default function NexusCinematicEngine() {
       positions[i * 3 + 2] = r * Math.cos(phi);
 
       const rand = Math.random();
-      const c = rand > 0.6 ? colorTealGlow : rand > 0.3 ? colorTeal : colorWhite;
+      const c =
+        rand > 0.6 ? colorTealGlow : rand > 0.3 ? colorTeal : colorWhite;
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
       colors[i * 3 + 2] = c.b;
@@ -120,35 +131,55 @@ export default function NexusCinematicEngine() {
         },
       });
 
-      timeline.to("#lbTop, #lbBot", {
-        height: "5vh",
-        ease: "power2.inOut",
-        duration: 0.2,
-      }, 0);
+      timeline.to(
+        "#lbTop, #lbBot",
+        {
+          height: "5vh",
+          ease: "power2.inOut",
+          duration: 0.2,
+        },
+        0,
+      );
 
-      timeline.to(camera.position, {
-        z: 2.2,
-        ease: "none",
-        duration: 1.0,
-      }, 0);
+      timeline.to(
+        camera.position,
+        {
+          z: 2.2,
+          ease: "none",
+          duration: 1.0,
+        },
+        0,
+      );
 
-      timeline.to("#heroStoryText", {
-        opacity: 1,
-        y: 0,
-        duration: 0.3,
-      }, 0.1);
+      timeline.to(
+        "#heroStoryText",
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+        },
+        0.1,
+      );
 
-      timeline.to("#heroStoryText", {
-        opacity: 0,
-        y: -30,
-        duration: 0.2,
-      }, 0.45);
+      timeline.to(
+        "#heroStoryText",
+        {
+          opacity: 0,
+          y: -30,
+          duration: 0.2,
+        },
+        0.45,
+      );
 
-      timeline.to("#heroDashboardPreview", {
-        opacity: 1,
-        scale: 1,
-        duration: 0.3,
-      }, 0.5);
+      timeline.to(
+        "#heroDashboardPreview",
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.3,
+        },
+        0.5,
+      );
     }
 
     return () => {
@@ -163,7 +194,6 @@ export default function NexusCinematicEngine() {
 
   return (
     <div className="relative bg-[#012624] text-[#bbc7c6] overflow-hidden">
-      
       {/* Three.js Background Canvas */}
       <canvas
         ref={canvasRef}
@@ -194,15 +224,39 @@ export default function NexusCinematicEngine() {
           <div className="h-9 w-9 rounded-[6px] bg-[#003734] border border-[#cbfffc]/20 flex items-center justify-center">
             <Hexagon className="h-5 w-5 text-[#cbfffc] animate-spin-slow" />
           </div>
-          <span className="text-xl font-medium tracking-tight text-[#ffffff]">AUROS TERMINAL</span>
+          <span className="text-xl font-medium tracking-tight text-[#ffffff]">
+            AUROS TERMINAL
+          </span>
         </div>
 
         <div className="hidden md:flex items-center space-x-8 text-xs font-medium uppercase tracking-[0.12em] text-[#bbc7c6]">
-          <a href="#collection" className="hover:text-[#ffffff] transition-colors">COLLECTION</a>
-          <a href="#craft" className="hover:text-[#ffffff] transition-colors">CRAFT</a>
-          <a href="#integration" className="hover:text-[#ffffff] transition-colors">SOROBAN</a>
-          <a href="#noema-manifesto" className="hover:text-[#ffffff] transition-colors">MANIFESTO</a>
-          <a href="#noema-board" className="hover:text-[#ffffff] transition-colors">ANALYTICS</a>
+          <a
+            href="#collection"
+            className="hover:text-[#ffffff] transition-colors"
+          >
+            COLLECTION
+          </a>
+          <a href="#craft" className="hover:text-[#ffffff] transition-colors">
+            CRAFT
+          </a>
+          <a
+            href="#integration"
+            className="hover:text-[#ffffff] transition-colors"
+          >
+            SOROBAN
+          </a>
+          <a
+            href="#noema-manifesto"
+            className="hover:text-[#ffffff] transition-colors"
+          >
+            MANIFESTO
+          </a>
+          <a
+            href="#noema-board"
+            className="hover:text-[#ffffff] transition-colors"
+          >
+            ANALYTICS
+          </a>
         </div>
 
         <div className="flex items-center space-x-4">
@@ -215,10 +269,9 @@ export default function NexusCinematicEngine() {
             </Button>
           ) : (
             <Link href="/dashboard">
-              <Button
-                className="bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0"
-              >
-                ENTER DASHBOARD <ArrowRight size={14} className="ml-1.5 inline" />
+              <Button className="bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0">
+                ENTER DASHBOARD{" "}
+                <ArrowRight size={14} className="ml-1.5 inline" />
               </Button>
             </Link>
           )}
@@ -226,10 +279,16 @@ export default function NexusCinematicEngine() {
       </nav>
 
       {/* SECTION 1: #cinematic */}
-      <div id="cinematic" ref={containerRef} className="relative h-[650vh] z-10">
+      <div
+        id="cinematic"
+        ref={containerRef}
+        className="relative h-[650vh] z-10"
+      >
         <div className="sticky-hero-frame sticky top-0 h-screen w-full flex flex-col items-center justify-center px-6 overflow-hidden">
-          
-          <div id="heroStoryText" className="text-center max-w-4xl opacity-100 transform translate-y-0 transition-all duration-500 z-20">
+          <div
+            id="heroStoryText"
+            className="text-center max-w-4xl opacity-100 transform translate-y-0 transition-all duration-500 z-20"
+          >
             <div className="mb-6 inline-flex items-center space-x-2 text-[12px] font-medium uppercase tracking-[0.12em] text-[#edfffe] px-4 py-1.5 rounded-[6px] bg-[#003734] border border-[#cbfffc]/15">
               <Sparkles size={14} className="text-[#cbfffc]" />
               <span>LEVEL 4 STELLAR FINTECH TERMINAL</span>
@@ -241,7 +300,8 @@ export default function NexusCinematicEngine() {
             </h1>
 
             <p className="mt-6 text-base md:text-lg text-[#bbc7c6] max-w-2xl mx-auto leading-[1.4]">
-              Automated, non-custodial Soroban smart contract billing. Settle invoices globally in seconds with cryptographic proof.
+              Automated, non-custodial Soroban smart contract billing. Settle
+              invoices globally in seconds with cryptographic proof.
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -269,7 +329,9 @@ export default function NexusCinematicEngine() {
                   <div className="h-3 w-3 rounded-full bg-[#00827c]" />
                   <div className="h-3 w-3 rounded-full bg-[#cbfffc]" />
                   <div className="h-3 w-3 rounded-full bg-[#fde9ff]" />
-                  <span className="text-xs font-mono text-[#bbc7c6]/70 ml-2">soroban_invoice_contract.wasm</span>
+                  <span className="text-xs font-mono text-[#bbc7c6]/70 ml-2">
+                    soroban_invoice_contract.wasm
+                  </span>
                 </div>
                 <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe] px-3 py-1 bg-[#012624] rounded-[6px] border border-[#cbfffc]/20">
                   STELLAR TESTNET LIVE
@@ -278,30 +340,52 @@ export default function NexusCinematicEngine() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-5 bg-[#012624] rounded-[12px] border border-[#cbfffc]/10">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Settled Balance</p>
-                  <p className="text-3xl font-medium text-[#fde9ff] mt-2">124,500.00 <span className="text-xs text-[#bbc7c6]">XLM</span></p>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                    Settled Balance
+                  </p>
+                  <p className="text-3xl font-medium text-[#fde9ff] mt-2">
+                    124,500.00{" "}
+                    <span className="text-xs text-[#bbc7c6]">XLM</span>
+                  </p>
                 </div>
                 <div className="p-5 bg-[#012624] rounded-[12px] border border-[#cbfffc]/10">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Contract Invoices</p>
-                  <p className="text-3xl font-medium text-[#ffffff] mt-2">1,482 <span className="text-xs text-[#cbfffc]">Active</span></p>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                    Contract Invoices
+                  </p>
+                  <p className="text-3xl font-medium text-[#ffffff] mt-2">
+                    1,482 <span className="text-xs text-[#cbfffc]">Active</span>
+                  </p>
                 </div>
                 <div className="p-5 bg-[#012624] rounded-[12px] border border-[#cbfffc]/10">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Network Latency</p>
-                  <p className="text-3xl font-medium text-[#fde9ff] mt-2">1.2s <span className="text-xs text-[#edfffe]">Instant</span></p>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                    Network Latency
+                  </p>
+                  <p className="text-3xl font-medium text-[#fde9ff] mt-2">
+                    1.2s <span className="text-xs text-[#edfffe]">Instant</span>
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
       {/* SECTION 2: #collection (Feature Cards in #003734 Surface 2) */}
-      <section id="collection" className="relative z-10 py-32 px-8 max-w-7xl mx-auto">
+      <section
+        id="collection"
+        className="relative z-10 py-32 px-8 max-w-7xl mx-auto"
+      >
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-3">#COLLECTION</p>
-          <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">Auros Feature Components</h2>
-          <p className="text-[#bbc7c6] mt-4 text-base leading-[1.4]">High-performance smart contract tooling designed for enterprise precision.</p>
+          <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-3">
+            #COLLECTION
+          </p>
+          <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">
+            Auros Feature Components
+          </h2>
+          <p className="text-[#bbc7c6] mt-4 text-base leading-[1.4]">
+            High-performance smart contract tooling designed for enterprise
+            precision.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -320,7 +404,8 @@ export default function NexusCinematicEngine() {
                 Instant Settlement
               </h3>
               <p className="text-base text-[#bbc7c6] leading-[1.4]">
-                Direct peer-to-peer settlement via Stellar ledger transactions in under 5 seconds.
+                Direct peer-to-peer settlement via Stellar ledger transactions
+                in under 5 seconds.
               </p>
             </div>
           </div>
@@ -340,7 +425,8 @@ export default function NexusCinematicEngine() {
                 Soroban Escrow
               </h3>
               <p className="text-base text-[#bbc7c6] leading-[1.4]">
-                Smart contract escrow state checks ensure tamper-proof invoice lifecycle events.
+                Smart contract escrow state checks ensure tamper-proof invoice
+                lifecycle events.
               </p>
             </div>
           </div>
@@ -360,7 +446,8 @@ export default function NexusCinematicEngine() {
                 Non-Custodial
               </h3>
               <p className="text-base text-[#bbc7c6] leading-[1.4]">
-                Your keys, your funds. Wallet connection handled securely via standard Freighter API.
+                Your keys, your funds. Wallet connection handled securely via
+                standard Freighter API.
               </p>
             </div>
           </div>
@@ -368,35 +455,95 @@ export default function NexusCinematicEngine() {
       </section>
 
       {/* SECTION 3: #craft (With Geometric Molecular Diagram) */}
-      <section id="craft" className="relative z-10 py-32 px-8 max-w-7xl mx-auto border-t border-[#cbfffc]/10">
+      <section
+        id="craft"
+        className="relative z-10 py-32 px-8 max-w-7xl mx-auto border-t border-[#cbfffc]/10"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
-            <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">#CRAFT</p>
-            <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">Precision Soroban Engine</h2>
+            <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
+              #CRAFT
+            </p>
+            <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">
+              Precision Soroban Engine
+            </h2>
             <p className="text-[#bbc7c6] text-base leading-[1.4]">
-              Utilizes WASM-compiled Soroban contracts to create automated escrow hooks, verifiable receipt signatures, and automatic disbursement rules.
+              Utilizes WASM-compiled Soroban contracts to create automated
+              escrow hooks, verifiable receipt signatures, and automatic
+              disbursement rules.
             </p>
             <div className="space-y-4 pt-4">
               <div className="flex items-center space-x-3 p-4 rounded-[6px] bg-[#003734] border border-[#cbfffc]/10">
                 <Cpu size={20} className="text-[#cbfffc]" />
-                <span className="text-sm font-medium text-[#edfffe]">Escrow State: Verified On-Chain</span>
+                <span className="text-sm font-medium text-[#edfffe]">
+                  Escrow State: Verified On-Chain
+                </span>
               </div>
               <div className="flex items-center space-x-3 p-4 rounded-[6px] bg-[#003734] border border-[#cbfffc]/10">
                 <Globe size={20} className="text-[#cbfffc]" />
-                <span className="text-sm font-medium text-[#edfffe]">Protocol: SEP-0007 QR Payment Scheme</span>
+                <span className="text-sm font-medium text-[#edfffe]">
+                  Protocol: SEP-0007 QR Payment Scheme
+                </span>
               </div>
             </div>
           </div>
 
           {/* Right Column: Geometric Molecular Diagram Decorative Visual */}
           <div className="bg-[#003734] rounded-[16px] p-10 border border-[#cbfffc]/10 flex flex-col items-center justify-center min-h-[340px] relative overflow-hidden">
-            <svg className="w-full h-64" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              className="w-full h-64"
+              viewBox="0 0 400 240"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               {/* Connector lines */}
-              <line x1="80" y1="120" x2="200" y2="60" stroke="#bbc7c6" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.6" />
-              <line x1="80" y1="120" x2="200" y2="180" stroke="#bbc7c6" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.6" />
-              <line x1="200" y1="60" x2="320" y2="120" stroke="#ffffff" strokeWidth="1.5" opacity="0.8" />
-              <line x1="200" y1="180" x2="320" y2="120" stroke="#ffffff" strokeWidth="1.5" opacity="0.8" />
-              <line x1="200" y1="60" x2="200" y2="180" stroke="#cbfffc" strokeWidth="2" opacity="0.7" />
+              <line
+                x1="80"
+                y1="120"
+                x2="200"
+                y2="60"
+                stroke="#bbc7c6"
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
+                opacity="0.6"
+              />
+              <line
+                x1="80"
+                y1="120"
+                x2="200"
+                y2="180"
+                stroke="#bbc7c6"
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
+                opacity="0.6"
+              />
+              <line
+                x1="200"
+                y1="60"
+                x2="320"
+                y2="120"
+                stroke="#ffffff"
+                strokeWidth="1.5"
+                opacity="0.8"
+              />
+              <line
+                x1="200"
+                y1="180"
+                x2="320"
+                y2="120"
+                stroke="#ffffff"
+                strokeWidth="1.5"
+                opacity="0.8"
+              />
+              <line
+                x1="200"
+                y1="60"
+                x2="200"
+                y2="180"
+                stroke="#cbfffc"
+                strokeWidth="2"
+                opacity="0.7"
+              />
 
               {/* Node circles */}
               <circle cx="80" cy="120" r="16" fill="#ffffff" />
@@ -418,49 +565,80 @@ export default function NexusCinematicEngine() {
       </section>
 
       {/* SECTION 4: #integration */}
-      <section id="integration" className="relative z-10 py-32 px-8 max-w-7xl mx-auto border-t border-[#cbfffc]/10">
+      <section
+        id="integration"
+        className="relative z-10 py-32 px-8 max-w-7xl mx-auto border-t border-[#cbfffc]/10"
+      >
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-3">#INTEGRATION</p>
-          <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">Seamless Wallet Authentication</h2>
-          <p className="text-[#bbc7c6] mt-4 text-base">Compatible with all major Stellar wallet extensions and web signers.</p>
+          <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-3">
+            #INTEGRATION
+          </p>
+          <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">
+            Seamless Wallet Authentication
+          </h2>
+          <p className="text-[#bbc7c6] mt-4 text-base">
+            Compatible with all major Stellar wallet extensions and web signers.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
           <div className="p-7 rounded-[16px] bg-[#003734] border border-[#cbfffc]/10 shadow-none">
             <p className="font-medium text-[#ffffff] text-lg">Freighter</p>
-            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#cbfffc] mt-2">Native Extension</p>
+            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#cbfffc] mt-2">
+              Native Extension
+            </p>
           </div>
           <div className="p-7 rounded-[16px] bg-[#003734] border border-[#cbfffc]/10 shadow-none">
             <p className="font-medium text-[#ffffff] text-lg">xBull</p>
-            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#edfffe] mt-2">Mobile & Web</p>
+            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#edfffe] mt-2">
+              Mobile & Web
+            </p>
           </div>
           <div className="p-7 rounded-[16px] bg-[#003734] border border-[#cbfffc]/10 shadow-none">
             <p className="font-medium text-[#ffffff] text-lg">Albedo</p>
-            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#cbfffc] mt-2">Web Auth</p>
+            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#cbfffc] mt-2">
+              Web Auth
+            </p>
           </div>
           <div className="p-7 rounded-[16px] bg-[#003734] border border-[#cbfffc]/10 shadow-none">
             <p className="font-medium text-[#ffffff] text-lg">SEP-0007</p>
-            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#fde9ff] mt-2">QR Standard</p>
+            <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-[#fde9ff] mt-2">
+              QR Standard
+            </p>
           </div>
         </div>
       </section>
 
       {/* SECTION 5: #noema-manifesto */}
-      <section id="noema-manifesto" className="relative z-10 py-32 px-8 max-w-5xl mx-auto text-center border-t border-[#cbfffc]/10">
-        <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-4">#NOEMA-MANIFESTO</p>
+      <section
+        id="noema-manifesto"
+        className="relative z-10 py-32 px-8 max-w-5xl mx-auto text-center border-t border-[#cbfffc]/10"
+      >
+        <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-4">
+          #NOEMA-MANIFESTO
+        </p>
         <h2 className="text-[36px] md:text-[52px] font-medium text-[#ffffff] tracking-[-0.04em] leading-[1.1]">
-          &ldquo;Global commerce without settlement delay, middleman fees, or opaque ledgers.&rdquo;
+          &ldquo;Global commerce without settlement delay, middleman fees, or
+          opaque ledgers.&rdquo;
         </h2>
         <p className="mt-8 text-[#bbc7c6] max-w-xl mx-auto text-base leading-[1.4]">
-          Stellar Invoice brings transparency and instant settlement to modern SaaS companies and global freelancers alike.
+          Stellar Invoice brings transparency and instant settlement to modern
+          SaaS companies and global freelancers alike.
         </p>
       </section>
 
       {/* SECTION 6: #noema-board (With 86px+ Matter 500 Stat Counters in #fde9ff) */}
-      <section id="noema-board" className="relative z-10 py-32 px-8 max-w-7xl mx-auto border-t border-[#cbfffc]/10">
+      <section
+        id="noema-board"
+        className="relative z-10 py-32 px-8 max-w-7xl mx-auto border-t border-[#cbfffc]/10"
+      >
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-3">#NOEMA-BOARD</p>
-          <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">Real-Time Ledger Performance</h2>
+          <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-3">
+            #NOEMA-BOARD
+          </p>
+          <h2 className="text-[36px] font-medium text-[#ffffff] tracking-[-0.03em]">
+            Real-Time Ledger Performance
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -494,8 +672,13 @@ export default function NexusCinematicEngine() {
       </section>
 
       {/* SECTION 7: #noema-support & CTA */}
-      <section id="noema-support" className="relative z-10 py-32 px-8 max-w-5xl mx-auto text-center border-t border-[#cbfffc]/10">
-        <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-4">#NOEMA-SUPPORT</p>
+      <section
+        id="noema-support"
+        className="relative z-10 py-32 px-8 max-w-5xl mx-auto text-center border-t border-[#cbfffc]/10"
+      >
+        <p className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] mb-4">
+          #NOEMA-SUPPORT
+        </p>
         <h2 className="text-[36px] md:text-[54px] font-medium text-[#ffffff] tracking-[-0.04em] leading-[1.1]">
           Ready to Deploy Your First Soroban Invoice?
         </h2>
@@ -515,12 +698,11 @@ export default function NexusCinematicEngine() {
             AUROS ABYSSAL FINTECH TERMINAL — STELLAR LEVEL 4 MASTERY
           </p>
           <p className="text-xs font-light text-[#bbc7c6]/70">
-            Powered by WASM-Compiled Soroban Smart Contracts on Stellar Testnet. All rights reserved.
+            Powered by WASM-Compiled Soroban Smart Contracts on Stellar Testnet.
+            All rights reserved.
           </p>
         </div>
       </footer>
-
     </div>
   );
 }
-

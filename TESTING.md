@@ -9,7 +9,7 @@ Stellar Invoice utilizes a comprehensive testing strategy covering the smart con
 - **Framework**: Standard Rust `#[test]` modules using the Soroban test `Env`.
 - **Location**: `contracts/invoice_contract/src/test.rs`
 - **Coverage**: Tests the entire lifecycle of an invoice (Creation, Retrieval, Listing, Updating, Cancelling, and Paying).
-- **Execution**: 
+- **Execution**:
   ```bash
   cd contracts/invoice_contract
   cargo test
@@ -40,6 +40,7 @@ Stellar Invoice utilizes a comprehensive testing strategy covering the smart con
 ## 4. End-to-End Testing (Turborepo)
 
 To run all testing, linting, and typechecking pipelines across the entire monorepo:
+
 ```bash
 pnpm check-types
 pnpm lint

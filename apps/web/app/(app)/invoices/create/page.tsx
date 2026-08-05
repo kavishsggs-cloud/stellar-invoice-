@@ -3,8 +3,26 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useWallet } from "../../../../hooks/useWallet";
-import { isValidAddress, InvoiceContractAPI, CONTRACT_ID, buildContractTransaction, submitTransaction } from "@repo/sdk";
-import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, Save, Users, FileSpreadsheet, Send, Calendar, HelpCircle, Hexagon } from "lucide-react";
+import {
+  isValidAddress,
+  InvoiceContractAPI,
+  CONTRACT_ID,
+  buildContractTransaction,
+  submitTransaction,
+} from "@repo/sdk";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Loader2,
+  Save,
+  Users,
+  FileSpreadsheet,
+  Send,
+  Calendar,
+  HelpCircle,
+  Hexagon,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -86,7 +104,11 @@ export default function CreateInvoice() {
     return error === "";
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => {
       const next = { ...prev, [name]: value };
@@ -125,14 +147,14 @@ export default function CreateInvoice() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!address) {
       toast.error("Please connect your wallet first");
       return;
     }
 
     let isValid = true;
-    Object.keys(formData).forEach(key => {
+    Object.keys(formData).forEach((key) => {
       if (!validate(key, formData[key as keyof typeof formData])) {
         isValid = false;
       }
@@ -147,42 +169,51 @@ export default function CreateInvoice() {
 
     try {
       const api = new InvoiceContractAPI(CONTRACT_ID);
-      const callData = api.getCallData("create_invoice", api.createInvoiceArgs({
-        creator: address,
-        clientName: formData.clientName,
-        recipient: formData.recipient,
-        clientEmail: formData.clientEmail,
-        description: formData.description,
-        amount: BigInt(Math.floor(Number(formData.amount) * 10000000)),
-        asset: formData.asset === "native" ? "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC" : formData.asset,
-        memo: formData.memo,
-        notes: formData.notes,
-        dueDate: BigInt(new Date(formData.dueDate).getTime()),
-      }));
+      const callData = api.getCallData(
+        "create_invoice",
+        api.createInvoiceArgs({
+          creator: address,
+          clientName: formData.clientName,
+          recipient: formData.recipient,
+          clientEmail: formData.clientEmail,
+          description: formData.description,
+          amount: BigInt(Math.floor(Number(formData.amount) * 10000000)),
+          asset:
+            formData.asset === "native"
+              ? "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+              : formData.asset,
+          memo: formData.memo,
+          notes: formData.notes,
+          dueDate: BigInt(new Date(formData.dueDate).getTime()),
+        }),
+      );
 
       const xdr = await buildContractTransaction(address, callData);
-      
+
       const signedXdr = await signTransaction(xdr).catch(() => {
         throw new Error("User rejected the transaction");
       });
-      
+
       const result = await submitTransaction(signedXdr);
 
       if (result.status !== "SUCCESS") {
         throw new Error(`Transaction failed: ${result.status}`);
       }
-      
+
       localStorage.removeItem("invoice_draft");
-      
+
       toast.success("Invoice created successfully!");
       setSuccess(true);
-      
+
       setTimeout(() => {
         router.push("/invoices");
       }, 2000);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        if (e.message.includes("User rejected") || e.message.includes("rejected")) {
+        if (
+          e.message.includes("User rejected") ||
+          e.message.includes("rejected")
+        ) {
           toast.warning("Transaction was cancelled in wallet");
           setErrors({ submit: "Transaction signature cancelled" });
         } else {
@@ -204,31 +235,39 @@ export default function CreateInvoice() {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+    show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
   if (success) {
     return (
       <div className="max-w-md mx-auto py-24 text-center space-y-6 text-[#bbc7c6]">
-        <motion.div 
-          initial={{ scale: 0, opacity: 0 }} 
-          animate={{ scale: 1, opacity: 1 }} 
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", bounce: 0.5 }}
           className="w-24 h-24 bg-[#012624] rounded-full flex items-center justify-center mx-auto border border-[#cbfffc]/20"
         >
           <CheckCircle2 className="text-[#cbfffc]" size={48} />
         </motion.div>
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-          <h1 className="text-[36px] font-medium text-[#ffffff]">Invoice Created!</h1>
-          <p className="text-[#bbc7c6] mt-2 mb-6">Your invoice has been successfully recorded on the Stellar network.</p>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h1 className="text-[36px] font-medium text-[#ffffff]">
+            Invoice Created!
+          </h1>
+          <p className="text-[#bbc7c6] mt-2 mb-6">
+            Your invoice has been successfully recorded on the Stellar network.
+          </p>
           <div className="flex items-center justify-center space-x-2 text-sm text-[#edfffe] bg-[#003734] py-3 rounded-[6px] border border-[#cbfffc]/10">
-            <Loader2 className="animate-spin text-[#cbfffc]" size={16} /> 
+            <Loader2 className="animate-spin text-[#cbfffc]" size={16} />
             <span>Redirecting to invoices...</span>
           </div>
         </motion.div>
@@ -237,13 +276,16 @@ export default function CreateInvoice() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="show"
       className="space-y-8 text-[#bbc7c6]"
     >
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
+      <motion.div
+        variants={itemVariants}
+        className="flex items-center justify-between"
+      >
         <div className="flex items-center space-x-4">
           <Link href="/invoices">
             <Button className="w-10 h-10 p-0 rounded-[6px] bg-[#003734] hover:bg-[#003734]/80 text-[#ffffff] border border-[#cbfffc]/15 shadow-none flex items-center justify-center">
@@ -251,11 +293,15 @@ export default function CreateInvoice() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-[36px] font-medium tracking-[-0.03em] text-[#ffffff]">Create Invoice</h1>
-            <p className="text-[#bbc7c6] mt-1 text-base">Issue a new blockchain billing record</p>
+            <h1 className="text-[36px] font-medium tracking-[-0.03em] text-[#ffffff]">
+              Create Invoice
+            </h1>
+            <p className="text-[#bbc7c6] mt-1 text-base">
+              Issue a new blockchain billing record
+            </p>
           </div>
         </div>
-        <Button 
+        <Button
           onClick={saveDraft}
           className="bg-[#012624] text-[#edfffe] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-5 py-2.5 hover:bg-[#012624]/80 border border-[#cbfffc]/15 shadow-none"
         >
@@ -267,14 +313,37 @@ export default function CreateInvoice() {
       {/* Progressive Step Progress Indicator */}
       <motion.div variants={itemVariants} className="max-w-xl">
         <div className="flex items-center justify-between text-xs font-medium uppercase tracking-[0.12em] text-[#bbc7c6] mb-3">
-          <span className={activeStep === "client" ? "text-[#cbfffc] font-medium" : ""}>1. Client Info</span>
-          <span className={activeStep === "details" ? "text-[#cbfffc] font-medium" : ""}>2. Invoice Info</span>
-          <span className={activeStep === "review" ? "text-[#cbfffc] font-medium" : ""}>3. Settle terms</span>
+          <span
+            className={
+              activeStep === "client" ? "text-[#cbfffc] font-medium" : ""
+            }
+          >
+            1. Client Info
+          </span>
+          <span
+            className={
+              activeStep === "details" ? "text-[#cbfffc] font-medium" : ""
+            }
+          >
+            2. Invoice Info
+          </span>
+          <span
+            className={
+              activeStep === "review" ? "text-[#cbfffc] font-medium" : ""
+            }
+          >
+            3. Settle terms
+          </span>
         </div>
         <div className="h-1.5 bg-[#011d1c] rounded-[3px] overflow-hidden">
-          <motion.div 
+          <motion.div
             animate={{
-              width: activeStep === "client" ? "33%" : activeStep === "details" ? "66%" : "100%"
+              width:
+                activeStep === "client"
+                  ? "33%"
+                  : activeStep === "details"
+                    ? "66%"
+                    : "100%",
             }}
             transition={{ duration: 0.3 }}
             className="h-full bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)]"
@@ -284,7 +353,6 @@ export default function CreateInvoice() {
 
       {/* Grid split view: form on the left, live invoice preview card mockup on the right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
         {/* Active Form Column */}
         <div className="lg:col-span-7">
           <form onSubmit={handleSubmit}>
@@ -297,7 +365,6 @@ export default function CreateInvoice() {
               )}
 
               <AnimatePresence mode="wait">
-                
                 {/* STEP 1: CLIENT DETAILS */}
                 {activeStep === "client" && (
                   <motion.div
@@ -310,12 +377,16 @@ export default function CreateInvoice() {
                   >
                     <div className="flex items-center space-x-3 border-b border-[#cbfffc]/10 pb-3">
                       <Users className="text-[#cbfffc]" size={20} />
-                      <h2 className="text-[24px] font-medium text-[#ffffff]">Client Details</h2>
+                      <h2 className="text-[24px] font-medium text-[#ffffff]">
+                        Client Details
+                      </h2>
                     </div>
 
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Client Name *</label>
+                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                          Client Name *
+                        </label>
                         <input
                           type="text"
                           name="clientName"
@@ -324,11 +395,18 @@ export default function CreateInvoice() {
                           placeholder="Acme Corp"
                           className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] placeholder:text-[#707777] focus:outline-none focus:border-[#cbfffc] transition-all"
                         />
-                        {errors.clientName && <p className="text-red-400 text-xs mt-1">{errors.clientName}</p>}
+                        {errors.clientName && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.clientName}
+                          </p>
+                        )}
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Client Email <span className="text-[#bbc7c6]/60">(Optional)</span></label>
+                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                          Client Email{" "}
+                          <span className="text-[#bbc7c6]/60">(Optional)</span>
+                        </label>
                         <input
                           type="email"
                           name="clientEmail"
@@ -337,11 +415,17 @@ export default function CreateInvoice() {
                           placeholder="billing@acme.com"
                           className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] placeholder:text-[#707777] focus:outline-none focus:border-[#cbfffc] transition-all"
                         />
-                        {errors.clientEmail && <p className="text-red-400 text-xs mt-1">{errors.clientEmail}</p>}
+                        {errors.clientEmail && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.clientEmail}
+                          </p>
+                        )}
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Client Stellar Address *</label>
+                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                          Client Stellar Address *
+                        </label>
                         <input
                           type="text"
                           name="recipient"
@@ -350,7 +434,11 @@ export default function CreateInvoice() {
                           placeholder="G..."
                           className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] placeholder:text-[#707777] focus:outline-none focus:border-[#cbfffc] transition-all font-mono"
                         />
-                        {errors.recipient && <p className="text-red-400 text-xs mt-1">{errors.recipient}</p>}
+                        {errors.recipient && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.recipient}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -379,12 +467,16 @@ export default function CreateInvoice() {
                   >
                     <div className="flex items-center space-x-3 border-b border-[#cbfffc]/10 pb-3">
                       <FileSpreadsheet className="text-[#cbfffc]" size={20} />
-                      <h2 className="text-[24px] font-medium text-[#ffffff]">Invoice details</h2>
+                      <h2 className="text-[24px] font-medium text-[#ffffff]">
+                        Invoice details
+                      </h2>
                     </div>
 
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Description *</label>
+                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                          Description *
+                        </label>
                         <input
                           type="text"
                           name="description"
@@ -393,12 +485,18 @@ export default function CreateInvoice() {
                           placeholder="Design Services - Phase 1"
                           className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] placeholder:text-[#707777] focus:outline-none focus:border-[#cbfffc] transition-all"
                         />
-                        {errors.description && <p className="text-red-400 text-xs mt-1">{errors.description}</p>}
+                        {errors.description && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.description}
+                          </p>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Amount *</label>
+                          <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                            Amount *
+                          </label>
                           <div className="relative">
                             <input
                               type="number"
@@ -410,29 +508,43 @@ export default function CreateInvoice() {
                               className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] placeholder:text-[#707777] focus:outline-none focus:border-[#cbfffc] transition-all"
                             />
                             <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                              <span className="text-[#bbc7c6] font-medium text-xs">{formData.asset === 'native' ? 'XLM' : 'USDC'}</span>
+                              <span className="text-[#bbc7c6] font-medium text-xs">
+                                {formData.asset === "native" ? "XLM" : "USDC"}
+                              </span>
                             </div>
                           </div>
-                          {errors.amount && <p className="text-red-400 text-xs mt-1">{errors.amount}</p>}
+                          {errors.amount && (
+                            <p className="text-red-400 text-xs mt-1">
+                              {errors.amount}
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-2">
-                          <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Asset *</label>
+                          <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                            Asset *
+                          </label>
                           <select
                             name="asset"
                             value={formData.asset}
                             onChange={handleChange}
                             className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] focus:outline-none focus:border-[#cbfffc] transition-all cursor-pointer"
                           >
-                            <option value="native" className="bg-[#012624]">XLM (Native)</option>
-                            <option value="usdc" className="bg-[#012624]">USDC</option>
+                            <option value="native" className="bg-[#012624]">
+                              XLM (Native)
+                            </option>
+                            <option value="usdc" className="bg-[#012624]">
+                              USDC
+                            </option>
                           </select>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Due Date *</label>
+                          <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                            Due Date *
+                          </label>
                           <input
                             type="date"
                             name="dueDate"
@@ -440,13 +552,22 @@ export default function CreateInvoice() {
                             onChange={handleChange}
                             className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] focus:outline-none focus:border-[#cbfffc] transition-all [color-scheme:dark]"
                           />
-                          {errors.dueDate && <p className="text-red-400 text-xs mt-1">{errors.dueDate}</p>}
+                          {errors.dueDate && (
+                            <p className="text-red-400 text-xs mt-1">
+                              {errors.dueDate}
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-2">
                           <div className="flex items-center space-x-1.5">
-                            <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Stellar Memo</label>
-                            <HelpCircle size={14} className="text-[#bbc7c6] cursor-help" />
+                            <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                              Stellar Memo
+                            </label>
+                            <HelpCircle
+                              size={14}
+                              className="text-[#bbc7c6] cursor-help"
+                            />
                           </div>
                           <input
                             type="text"
@@ -457,12 +578,19 @@ export default function CreateInvoice() {
                             maxLength={28}
                             className="flex h-11 w-full rounded-[6px] border border-[#cbfffc]/15 bg-[#012624] px-4 text-sm text-[#ffffff] placeholder:text-[#707777] focus:outline-none focus:border-[#cbfffc] transition-all"
                           />
-                          {errors.memo && <p className="text-red-400 text-xs mt-1">{errors.memo}</p>}
+                          {errors.memo && (
+                            <p className="text-red-400 text-xs mt-1">
+                              {errors.memo}
+                            </p>
+                          )}
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">Notes <span className="text-[#bbc7c6]/60">(Optional)</span></label>
+                        <label className="block text-xs font-medium uppercase tracking-[0.1em] text-[#edfffe]">
+                          Notes{" "}
+                          <span className="text-[#bbc7c6]/60">(Optional)</span>
+                        </label>
                         <textarea
                           name="notes"
                           value={formData.notes}
@@ -506,26 +634,39 @@ export default function CreateInvoice() {
                   >
                     <div className="flex items-center space-x-3 border-b border-[#cbfffc]/10 pb-3">
                       <Send className="text-[#cbfffc]" size={20} />
-                      <h2 className="text-[24px] font-medium text-[#ffffff]">Review & Submit</h2>
+                      <h2 className="text-[24px] font-medium text-[#ffffff]">
+                        Review & Submit
+                      </h2>
                     </div>
 
                     <div className="space-y-4 bg-[#012624] p-5 rounded-[12px] border border-[#cbfffc]/10">
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
                           <p className="text-[#bbc7c6] text-xs">Client Name</p>
-                          <p className="text-[#ffffff] font-medium mt-1">{formData.clientName}</p>
+                          <p className="text-[#ffffff] font-medium mt-1">
+                            {formData.clientName}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-[#bbc7c6] text-xs">Client Address</p>
-                          <p className="text-[#ffffff] font-mono mt-1 truncate">{formData.recipient}</p>
+                          <p className="text-[#bbc7c6] text-xs">
+                            Client Address
+                          </p>
+                          <p className="text-[#ffffff] font-mono mt-1 truncate">
+                            {formData.recipient}
+                          </p>
                         </div>
                         <div>
                           <p className="text-[#bbc7c6] text-xs">Total Amount</p>
-                          <p className="text-[#fde9ff] font-medium text-lg font-['Matter',sans-serif] mt-1">{formData.amount} {formData.asset === 'native' ? 'XLM' : 'USDC'}</p>
+                          <p className="text-[#fde9ff] font-medium text-lg font-['Matter',sans-serif] mt-1">
+                            {formData.amount}{" "}
+                            {formData.asset === "native" ? "XLM" : "USDC"}
+                          </p>
                         </div>
                         <div>
                           <p className="text-[#bbc7c6] text-xs">Due Date</p>
-                          <p className="text-[#ffffff] font-medium mt-1">{formData.dueDate}</p>
+                          <p className="text-[#ffffff] font-medium mt-1">
+                            {formData.dueDate}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -555,7 +696,6 @@ export default function CreateInvoice() {
                     </div>
                   </motion.div>
                 )}
-
               </AnimatePresence>
             </div>
           </form>
@@ -572,11 +712,12 @@ export default function CreateInvoice() {
           </div>
 
           <div className="bg-[#003734] rounded-[16px] border border-[#cbfffc]/15 shadow-none overflow-hidden">
-            
             <div className="px-6 py-4 bg-[#012624] border-b border-[#cbfffc]/10 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Hexagon size={18} className="text-[#cbfffc]" />
-                <span className="text-xs font-medium text-[#ffffff] tracking-wider uppercase">Stellar Receipt</span>
+                <span className="text-xs font-medium text-[#ffffff] tracking-wider uppercase">
+                  Stellar Receipt
+                </span>
               </div>
               <span className="text-[10px] font-medium uppercase tracking-[0.1em] px-2.5 py-0.5 rounded-[4px] border bg-[#003734] text-[#edfffe] border-[#edfffe]/30">
                 Draft
@@ -585,59 +726,79 @@ export default function CreateInvoice() {
 
             <div className="p-6 sm:p-8 space-y-6">
               <div>
-                <p className="text-[#edfffe] text-[10px] uppercase tracking-[0.1em] font-medium">Amount Due</p>
+                <p className="text-[#edfffe] text-[10px] uppercase tracking-[0.1em] font-medium">
+                  Amount Due
+                </p>
                 <div className="flex items-baseline space-x-2 mt-1">
-                  <span className="text-4xl font-medium text-[#fde9ff] font-['Matter',sans-serif]">{formData.amount || "0.00"}</span>
-                  <span className="text-lg text-[#cbfffc] font-medium">{formData.asset === 'native' ? 'XLM' : 'USDC'}</span>
+                  <span className="text-4xl font-medium text-[#fde9ff] font-['Matter',sans-serif]">
+                    {formData.amount || "0.00"}
+                  </span>
+                  <span className="text-lg text-[#cbfffc] font-medium">
+                    {formData.asset === "native" ? "XLM" : "USDC"}
+                  </span>
                 </div>
               </div>
 
               <div className="space-y-4 text-xs">
-                
                 <div className="pb-4 border-b border-[#cbfffc]/10">
-                  <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">Bill To Client</p>
-                  <p className="text-[#ffffff] font-medium text-sm truncate">{formData.clientName || "Acme Client Corp"}</p>
+                  <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">
+                    Bill To Client
+                  </p>
+                  <p className="text-[#ffffff] font-medium text-sm truncate">
+                    {formData.clientName || "Acme Client Corp"}
+                  </p>
                   {formData.recipient && (
-                    <p className="text-[#bbc7c6] font-mono mt-0.5 truncate">{formData.recipient}</p>
+                    <p className="text-[#bbc7c6] font-mono mt-0.5 truncate">
+                      {formData.recipient}
+                    </p>
                   )}
                 </div>
 
                 <div className="pb-4 border-b border-[#cbfffc]/10">
-                  <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">Description</p>
-                  <p className="text-[#ffffff] font-normal">{formData.description || "Web billing contract development..."}</p>
+                  <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">
+                    Description
+                  </p>
+                  <p className="text-[#ffffff] font-normal">
+                    {formData.description ||
+                      "Web billing contract development..."}
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">Due Date</p>
+                    <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">
+                      Due Date
+                    </p>
                     <div className="flex items-center text-[#ffffff]">
                       <Calendar size={12} className="mr-1.5 text-[#bbc7c6]" />
                       <span>{formData.dueDate || "N/A"}</span>
                     </div>
                   </div>
                   <div>
-                    <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">Memo</p>
-                    <p className="text-[#ffffff] font-mono truncate">{formData.memo || "None"}</p>
+                    <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">
+                      Memo
+                    </p>
+                    <p className="text-[#ffffff] font-mono truncate">
+                      {formData.memo || "None"}
+                    </p>
                   </div>
                 </div>
 
                 {formData.notes && (
                   <div>
-                    <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">Notes</p>
-                    <p className="text-[#bbc7c6] italic">&quot;{formData.notes}&quot;</p>
+                    <p className="text-[#edfffe] uppercase tracking-[0.1em] mb-1 font-medium text-[10px]">
+                      Notes
+                    </p>
+                    <p className="text-[#bbc7c6] italic">
+                      &quot;{formData.notes}&quot;
+                    </p>
                   </div>
                 )}
-
               </div>
-
             </div>
-
           </div>
         </div>
-
       </div>
-
     </motion.div>
   );
 }
-

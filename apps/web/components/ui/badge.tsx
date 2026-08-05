@@ -27,7 +27,7 @@ export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 Badge.displayName = "Badge";

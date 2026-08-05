@@ -11,9 +11,20 @@ export interface CardProps extends HTMLMotionProps<"div"> {
 }
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant = "glass", padding = "lg", interactive = false, children, ...props }, ref) => {
-    const baseStyles = "relative overflow-hidden rounded-[24px] shadow-[var(--shadow-premium-card)] transition-all duration-300";
-    
+  (
+    {
+      className,
+      variant = "glass",
+      padding = "lg",
+      interactive = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const baseStyles =
+      "relative overflow-hidden rounded-[24px] shadow-[var(--shadow-premium-card)] transition-all duration-300";
+
     const variants = {
       glass: "glass-panel",
       solid: "bg-surface border border-white/5",
@@ -32,13 +43,18 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         whileHover={interactive ? { y: -4, scale: 1.01 } : undefined}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className={cn(baseStyles, variants[variant], paddings[padding], className)}
+        className={cn(
+          baseStyles,
+          variants[variant],
+          paddings[padding],
+          className,
+        )}
         {...props}
       >
         {children}
       </motion.div>
     );
-  }
+  },
 );
 
 Card.displayName = "Card";

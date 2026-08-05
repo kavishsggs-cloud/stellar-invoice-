@@ -1,6 +1,7 @@
 # Completion Report
 
 ## Executive Summary
+
 The Stellar Invoice project sprint 4 has successfully reached its goal. All functional and non-functional requirements to satisfy the **Stellar Journey to Mastery Level 4** criteria have been met. The system transitions completely away from mock placeholders into a fully integrated, live Testnet DApp.
 
 ## Milestones Achieved
@@ -24,9 +25,11 @@ The Stellar Invoice project sprint 4 has successfully reached its goal. All func
    - Codebase strictly type-checked, linted, and covered with vitest/cargo tests.
 
 ## Known Limitations / Future Work (Level 5+)
+
 - **SEP-0007 / Native App Hooks**: While QR codes are generated, deeper integration with mobile wallet deep linking can be added for seamless mobile payments.
 - **Push Notifications**: Integrating Soroban event listeners on a backend indexing service (like a Horizon webhook or Mercury) to push WebSocket events to the frontend when an invoice status changes.
 - **Analytics Service Provider**: Currently falls back to a clean UI/localStorage abstraction. Needs specific keys for PostHog / Vercel Analytics in a real production scenario.
 
 ## Final Sign-Off
+
 All automated tests pass. The codebase is fully committed. The MVP is ready to launch.
