@@ -7,12 +7,9 @@ import { useDashboard } from "../../../hooks/useDashboard";
 import { InvoiceStatus } from "@repo/sdk";
 import { ArrowUpRight, Clock, CheckCircle2, XCircle, PlusCircle, FileText, Wallet, Activity, Calendar } from "lucide-react";
 import RevenueChart from "../../../components/RevenueChart";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "../../../components/ui/button";
-import { Card } from "../../../components/ui/card";
-import { Badge } from "../../../components/ui/badge";
 
-// Dynamic Animated Number Counter Component
 const AnimatedCounter = ({ value, duration = 1.2, decimals = 0 }: { value: number; duration?: number; decimals?: number }) => {
   const [count, setCount] = useState(0);
 
@@ -52,9 +49,9 @@ export default function Dashboard() {
   if (isLoading || !metrics || !invoices) {
     return (
       <div className="animate-pulse space-y-6">
-        <div className="h-8 w-48 bg-white/5 rounded-lg"></div>
+        <div className="h-8 w-48 bg-[#003734] rounded-[6px]"></div>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {[1,2,3,4,5].map(i => <div key={i} className="h-32 bg-white/5 rounded-2xl border border-white/5"></div>)}
+          {[1,2,3,4,5].map(i => <div key={i} className="h-32 bg-[#003734] rounded-[16px] border border-[#cbfffc]/10"></div>)}
         </div>
       </div>
     );
@@ -65,107 +62,102 @@ export default function Dashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="space-y-8 pb-12"
+      className="space-y-8 pb-12 text-[#bbc7c6]"
     >
       {/* Header section */}
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">Dashboard Overview</h1>
-          <p className="text-text-secondary mt-1 font-light">Real-time Soroban contract balance metrics and billing data.</p>
+          <h1 className="text-[36px] font-medium tracking-[-0.03em] text-[#ffffff]">Dashboard Overview</h1>
+          <p className="text-[#bbc7c6] mt-1 font-normal text-base">Real-time Soroban contract balance metrics and billing data.</p>
         </div>
         <div className="flex space-x-3 w-full sm:w-auto">
           <Link href="/invoices/create" className="w-full sm:w-auto">
-            <Button size="md" className="w-full sm:w-auto shadow-[var(--shadow-premium-button)]">
-              <PlusCircle size={18} />
+            <Button className="w-full sm:w-auto bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0 flex items-center justify-center">
+              <PlusCircle size={18} className="mr-2 inline" />
               <span>Create Invoice</span>
             </Button>
           </Link>
         </div>
       </motion.div>
 
-      {/* Metrics Row */}
+      {/* Metrics Row (Auros Surface 2 Cards with #fde9ff counters) */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         
         {/* Total Revenue */}
-        <Card variant="glass" padding="md" className="hover:-translate-y-1 transition-transform relative group">
-          <div className="absolute inset-0 bg-glass-glow rounded-3xl opacity-0 group-hover:opacity-40 transition-opacity" />
+        <div className="bg-[#003734] rounded-[16px] p-5 border border-[#cbfffc]/10 shadow-none relative group">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">Total Revenue</p>
-            <div className="bg-success/10 p-2 rounded-xl text-success border border-success/10">
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Total Revenue</p>
+            <div className="bg-[#012624] p-2 rounded-[6px] text-[#cbfffc] border border-[#cbfffc]/10">
               <ArrowUpRight size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-2xl font-black text-white">
+            <div className="text-3xl font-medium text-[#fde9ff] font-['Matter',sans-serif]">
               <AnimatedCounter value={metrics.totalRevenue} decimals={2} /> 
-              <span className="text-xs text-stellar-blue font-semibold ml-1.5 uppercase">XLM</span>
-            </h3>
+              <span className="text-xs text-[#bbc7c6] font-normal ml-1.5 uppercase">XLM</span>
+            </div>
           </div>
-        </Card>
+        </div>
 
         {/* Total Invoices */}
-        <Card variant="glass" padding="md" className="hover:-translate-y-1 transition-transform relative group">
-          <div className="absolute inset-0 bg-glass-glow rounded-3xl opacity-0 group-hover:opacity-40 transition-opacity" />
+        <div className="bg-[#003734] rounded-[16px] p-5 border border-[#cbfffc]/10 shadow-none relative group">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">Total Invoices</p>
-            <div className="bg-stellar-blue/10 p-2 rounded-xl text-stellar-blue border border-stellar-blue/10">
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Total Invoices</p>
+            <div className="bg-[#012624] p-2 rounded-[6px] text-[#cbfffc] border border-[#cbfffc]/10">
               <FileText size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">
+            <div className="text-3xl font-medium text-[#fde9ff] font-['Matter',sans-serif]">
               <AnimatedCounter value={metrics.totalInvoices} />
-            </h3>
+            </div>
           </div>
-        </Card>
+        </div>
 
         {/* Paid Invoices */}
-        <Card variant="glass" padding="md" className="hover:-translate-y-1 transition-transform relative group">
-          <div className="absolute inset-0 bg-glass-glow rounded-3xl opacity-0 group-hover:opacity-40 transition-opacity" />
+        <div className="bg-[#003734] rounded-[16px] p-5 border border-[#cbfffc]/10 shadow-none relative group">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">Paid Receipts</p>
-            <div className="bg-success/10 p-2 rounded-xl text-success border border-success/10">
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Paid Receipts</p>
+            <div className="bg-[#012624] p-2 rounded-[6px] text-[#cbfffc] border border-[#cbfffc]/10">
               <CheckCircle2 size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">
+            <div className="text-3xl font-medium text-[#fde9ff] font-['Matter',sans-serif]">
               <AnimatedCounter value={metrics.paidCount} />
-            </h3>
+            </div>
           </div>
-        </Card>
+        </div>
 
         {/* Pending Invoices */}
-        <Card variant="glass" padding="md" className="hover:-translate-y-1 transition-transform relative group">
-          <div className="absolute inset-0 bg-glass-glow rounded-3xl opacity-0 group-hover:opacity-40 transition-opacity" />
+        <div className="bg-[#003734] rounded-[16px] p-5 border border-[#cbfffc]/10 shadow-none relative group">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">Pending Requests</p>
-            <div className="bg-warning/10 p-2 rounded-xl text-warning border border-warning/10">
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Pending Requests</p>
+            <div className="bg-[#012624] p-2 rounded-[6px] text-[#cbfffc] border border-[#cbfffc]/10">
               <Clock size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">
+            <div className="text-3xl font-medium text-[#fde9ff] font-['Matter',sans-serif]">
               <AnimatedCounter value={metrics.pendingCount} />
-            </h3>
+            </div>
           </div>
-        </Card>
+        </div>
 
         {/* Cancelled Invoices */}
-        <Card variant="glass" padding="md" className="hover:-translate-y-1 transition-transform relative group">
-          <div className="absolute inset-0 bg-glass-glow rounded-3xl opacity-0 group-hover:opacity-40 transition-opacity" />
+        <div className="bg-[#003734] rounded-[16px] p-5 border border-[#cbfffc]/10 shadow-none relative group">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">Cancelled Receipts</p>
-            <div className="bg-danger/10 p-2 rounded-xl text-danger border border-danger/10">
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#edfffe]">Cancelled Receipts</p>
+            <div className="bg-[#012624] p-2 rounded-[6px] text-[#707777] border border-[#cbfffc]/10">
               <XCircle size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-black text-white">
+            <div className="text-3xl font-medium text-[#fde9ff] font-['Matter',sans-serif]">
               <AnimatedCounter value={metrics.cancelledCount} />
-            </h3>
+            </div>
           </div>
-        </Card>
+        </div>
 
       </motion.div>
 
@@ -176,33 +168,35 @@ export default function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Revenue Chart Widget */}
-          <Card variant="glass" padding="lg">
+          <div className="bg-[#003734] rounded-[16px] p-8 border border-[#cbfffc]/10 shadow-none">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white flex items-center">
-                <div className="bg-stellar-blue/10 p-2 rounded-xl mr-3 text-stellar-blue border border-stellar-blue/15">
+              <h2 className="text-[24px] font-medium text-[#ffffff] flex items-center tracking-[-0.02em]">
+                <div className="bg-[#012624] p-2 rounded-[6px] mr-3 text-[#cbfffc] border border-[#cbfffc]/10">
                   <Activity size={18} />
                 </div>
-                Revenue Trend <span className="text-xs text-text-muted font-light ml-2 uppercase">(Last 7 Days)</span>
+                Revenue Trend <span className="text-xs text-[#bbc7c6] font-normal ml-2 uppercase">(Last 7 Days)</span>
               </h2>
             </div>
             <RevenueChart invoices={invoices} />
-          </Card>
+          </div>
 
           {/* Timeline Activity Feed */}
-          <Card variant="glass" padding="lg">
+          <div className="bg-[#003734] rounded-[16px] p-8 border border-[#cbfffc]/10 shadow-none">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white">Recent Settle Timeline</h2>
+              <h2 className="text-[24px] font-medium text-[#ffffff] tracking-[-0.02em]">Recent Settle Timeline</h2>
               <Link href="/invoices">
-                <Button variant="ghost" size="sm">View All</Button>
+                <Button className="bg-[#012624] text-[#edfffe] font-medium text-[12px] uppercase tracking-[0.05em] rounded-[6px] px-4 py-2 hover:bg-[#012624]/80 border border-[#cbfffc]/15 shadow-none">
+                  View All
+                </Button>
               </Link>
             </div>
             
             {invoices.length === 0 ? (
-              <div className="text-center py-12 text-text-muted border border-dashed border-white/10 rounded-2xl bg-white/5 font-light">
+              <div className="text-center py-12 text-[#bbc7c6] border border-dashed border-[#cbfffc]/10 rounded-[12px] bg-[#012624] font-normal text-sm">
                 No active receipts found. Create your first invoice!
               </div>
             ) : (
-              <div className="relative border-l border-white/5 pl-6 ml-4 space-y-8">
+              <div className="relative border-l border-[#cbfffc]/10 pl-6 ml-4 space-y-8">
                 {invoices.slice(0, 4).map((invoice, index) => {
                   const isPaidStatus = invoice.status === InvoiceStatus.Paid;
                   const isCancelledStatus = invoice.status === InvoiceStatus.Cancelled;
@@ -215,14 +209,14 @@ export default function Dashboard() {
                       className="relative"
                     >
                       {/* Timeline Dot Indicator */}
-                      <span className={`absolute top-1 -left-[31px] w-4 h-4 rounded-full border-2 border-[#06121F] flex items-center justify-center ${
-                        isPaidStatus ? "bg-success" : isCancelledStatus ? "bg-danger" : "bg-warning"
+                      <span className={`absolute top-1 -left-[31px] w-4 h-4 rounded-full border-2 border-[#012624] flex items-center justify-center ${
+                        isPaidStatus ? "bg-[#cbfffc]" : isCancelledStatus ? "bg-[#707777]" : "bg-[#00827c]"
                       }`} />
 
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-white/5 -mx-4 px-4 py-2 rounded-xl transition-colors">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-[#012624]/50 -mx-4 px-4 py-3 rounded-[8px] transition-colors border border-transparent hover:border-[#cbfffc]/10">
                         <div>
-                          <p className="font-semibold text-white text-sm">{invoice.description || invoice.memo || "No description"}</p>
-                          <div className="flex items-center space-x-2 text-xs text-text-muted mt-1 font-mono">
+                          <p className="font-medium text-[#ffffff] text-sm">{invoice.description || invoice.memo || "No description"}</p>
+                          <div className="flex items-center space-x-2 text-xs text-[#bbc7c6] mt-1 font-mono">
                             <span>To: {invoice.recipient.slice(0, 6)}...{invoice.recipient.slice(-4)}</span>
                             <span>•</span>
                             <span className="flex items-center">
@@ -233,11 +227,17 @@ export default function Dashboard() {
                         </div>
 
                         <div className="text-left sm:text-right flex items-center sm:flex-col justify-between sm:justify-center">
-                          <p className="font-bold text-white text-sm">{(Number(invoice.amount) / 10000000).toFixed(2)} XLM</p>
+                          <p className="font-medium text-[#fde9ff] text-base font-['Matter',sans-serif]">{(Number(invoice.amount) / 10000000).toFixed(2)} XLM</p>
                           <div className="sm:mt-1">
-                            {isPaidStatus && <Badge variant="success">Paid</Badge>}
-                            {invoice.status === InvoiceStatus.Pending && <Badge variant="warning">Pending</Badge>}
-                            {isCancelledStatus && <Badge variant="danger">Cancelled</Badge>}
+                            <span className={`text-[10px] font-medium uppercase tracking-[0.1em] px-2.5 py-0.5 rounded-[4px] border ${
+                              isPaidStatus 
+                                ? 'bg-[#012624] text-[#cbfffc] border-[#cbfffc]/30'
+                                : isCancelledStatus
+                                ? 'bg-[#011d1c] text-[#707777] border-[#707777]/30'
+                                : 'bg-[#003734] text-[#edfffe] border-[#edfffe]/30'
+                            }`}>
+                              {isPaidStatus ? 'PAID' : isCancelledStatus ? 'CANCELLED' : 'PENDING'}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -246,7 +246,7 @@ export default function Dashboard() {
                 })}
               </div>
             )}
-          </Card>
+          </div>
 
         </div>
 
@@ -254,42 +254,43 @@ export default function Dashboard() {
         <div className="space-y-6">
           
           {/* Wallet Summary */}
-          <Card variant="highlight" padding="lg" className="relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-stellar-blue/10 blur-2xl rounded-full pointer-events-none" />
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center">
-              <Wallet className="mr-2 text-stellar-blue animate-pulse" size={20} />
+          <div className="bg-[#003734] rounded-[16px] p-8 border border-[#cbfffc]/10 shadow-none relative overflow-hidden">
+            <h2 className="text-[24px] font-medium text-[#ffffff] mb-4 flex items-center tracking-[-0.02em]">
+              <Wallet className="mr-2.5 text-[#cbfffc]" size={20} />
               Connected Node
             </h2>
-            <div className="bg-surface/50 rounded-xl p-4 border border-white/5 space-y-3">
+            <div className="bg-[#012624] rounded-[12px] p-5 border border-[#cbfffc]/10 space-y-3">
               <div>
-                <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Account Coordinates</p>
-                <p className="font-mono text-xs text-emerald break-all mt-1">{address || "Not connected"}</p>
+                <p className="text-[11px] font-medium text-[#edfffe] uppercase tracking-[0.1em]">Account Coordinates</p>
+                <p className="font-mono text-xs text-[#cbfffc] break-all mt-1">{address || "Not connected"}</p>
               </div>
-              <div className="flex items-center justify-between text-xs text-text-secondary pt-2 border-t border-white/5">
-                <span>Stellar Ledger</span>
-                <Badge variant="premium">Testnet</Badge>
+              <div className="flex items-center justify-between text-xs text-[#bbc7c6] pt-3 border-t border-[#cbfffc]/10">
+                <span>Stellar Network</span>
+                <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#cbfffc] bg-[#003734] px-2.5 py-0.5 rounded-[4px] border border-[#cbfffc]/20">
+                  Testnet
+                </span>
               </div>
             </div>
-          </Card>
+          </div>
 
           {/* Quick Actions Panel */}
-          <Card variant="glass" padding="lg">
-            <h2 className="text-lg font-bold text-white mb-4">Quick actions</h2>
+          <div className="bg-[#003734] rounded-[16px] p-8 border border-[#cbfffc]/10 shadow-none">
+            <h2 className="text-[24px] font-medium text-[#ffffff] mb-4 tracking-[-0.02em]">Quick Actions</h2>
             <div className="space-y-3">
               <Link href="/invoices/create" className="block w-full">
-                <Button variant="primary" className="w-full justify-start text-sm">
-                  <PlusCircle size={16} className="mr-2" />
+                <Button className="w-full justify-start bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-3 hover:opacity-90 shadow-none border-0">
+                  <PlusCircle size={16} className="mr-2 inline" />
                   New Invoice Request
                 </Button>
               </Link>
               <Link href="/invoices" className="block w-full">
-                <Button variant="secondary" className="w-full justify-start text-sm">
-                  <FileText size={16} className="mr-2" />
+                <Button className="w-full justify-start bg-[#012624] text-[#ffffff] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-3 hover:bg-[#012624]/80 border border-[#cbfffc]/20 shadow-none">
+                  <FileText size={16} className="mr-2 inline" />
                   All Invoices History
                 </Button>
               </Link>
             </div>
-          </Card>
+          </div>
 
         </div>
 
@@ -297,3 +298,4 @@ export default function Dashboard() {
     </motion.div>
   );
 }
+
