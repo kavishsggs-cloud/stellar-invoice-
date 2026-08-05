@@ -1,34 +1,52 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand Accents */
-  --color-stellar-blue: #08B5E5;
-  --color-emerald: #14D9C4;
-  --color-premium: #8B5CF6;
+  /* Auros Abyssal Surface Stack */
+  --color-surface-0: #012624; /* Liquid Abyss */
+  --color-surface-1: #011d1c; /* Liquid Deep */
+  --color-surface-2: #003734; /* Liquid Kelp */
+  --color-surface-3: #707777; /* Slate Deep */
   
-  /* Backgrounds & Surfaces */
-  --color-midnight-navy: #06121F;
-  --color-slate-bg: #0B1728;
-  --color-surface: #132238;
-  --color-glass: rgba(19, 34, 56, 0.55);
+  /* Legacy Surface Mappings for backwards compatibility */
+  --color-midnight-navy: #012624;
+  --color-slate-bg: #011d1c;
+  --color-surface: #003734;
+  --color-glass: rgba(0, 55, 52, 0.6);
   
-  /* Text */
-  --color-text-primary: #F8FAFC;
-  --color-text-secondary: #A9B4C4;
-  --color-text-muted: #6F8097;
+  /* Auros Text Tokens */
+  --color-text-platinum: #ffffff;
+  --color-text-silver: #bbc7c6;
+  --color-text-liquid: #edfffe;
+  --color-text-ash: #f2f2f2;
   
-  /* Status */
-  --color-success: #22C55E;
-  --color-warning: #FBBF24;
-  --color-danger: #EF4444;
+  /* Legacy Text Mappings */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #bbc7c6;
+  --color-text-muted: #707777;
+  
+  /* Accents & Highlights */
+  --color-stat-pink: #fde9ff;
+  --color-teal-accent: #00827c;
+  --color-teal-glow: #cbfffc;
+  
+  /* Legacy Accents */
+  --color-stellar-blue: #00827c;
+  --color-emerald: #cbfffc;
+  --color-premium: #cbfffc;
   
   /* Borders */
-  --color-border-glass: rgba(255, 255, 255, 0.08);
-  --color-divider: rgba(255, 255, 255, 0.05);
+  --color-border-glass: rgba(203, 255, 252, 0.12);
+  --color-divider: rgba(203, 255, 252, 0.08);
 
-  /* Shadows */
-  --shadow-premium-card: 0 20px 60px rgba(0, 0, 0, 0.35);
-  --shadow-premium-button: 0 10px 40px rgba(8, 181, 229, 0.35);
-  --shadow-premium-dialog: 0 40px 120px rgba(0, 0, 0, 0.5);
-  --shadow-premium-hover: 0 25px 80px rgba(8, 181, 229, 0.25);
+  /* Shape Tokens */
+  --radius-cards: 16px;
+  --radius-buttons: 6px;
+  
+  /* NO DROP SHADOWS per design spec */
+  --shadow-none: none;
+  --shadow-premium-card: none;
+  --shadow-premium-button: none;
+  --shadow-premium-dialog: none;
+  --shadow-premium-hover: none;
 }
+

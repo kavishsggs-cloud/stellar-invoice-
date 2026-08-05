@@ -1,36 +1,133 @@
 @import "tailwindcss";
 @import "@repo/tailwind-config";
 
-@utility bg-hero-gradient {
-  background: linear-gradient(135deg, var(--color-midnight-navy) 0%, var(--color-slate-bg) 45%, #102B44 100%);
+:root {
+  --font-primary: 'Matter', 'Inter', 'DM Sans', 'Satoshi', sans-serif;
+  --font-utility: 'Arial', system-ui, sans-serif;
+  
+  --surface-0: #012624;
+  --surface-1: #011d1c;
+  --surface-2: #003734;
+  --surface-3: #707777;
+
+  --text-primary: #ffffff;
+  --text-secondary: #bbc7c6;
+  --text-emphasis: #edfffe;
+  --text-ash: #f2f2f2;
+  --stat-counter: #fde9ff;
+
+  --gradient-bioluminescent: linear-gradient(90deg, #00827c 0%, #cbfffc 100%);
+  --gradient-aurora: linear-gradient(90deg, #cbfffc 0%, #edfffe 26.25%, #fffdfa 47.57%, #fad1ff 88.96%);
 }
 
-@utility bg-primary-cta {
-  background: linear-gradient(90deg, var(--color-stellar-blue), var(--color-emerald));
+@utility bg-surface-0 {
+  background-color: #012624;
 }
 
-@utility bg-card-highlight {
-  background: linear-gradient(135deg, rgba(8, 181, 229, 0.18), rgba(20, 217, 196, 0.08));
+@utility bg-surface-1 {
+  background-color: #011d1c;
 }
 
-@utility bg-glass-glow {
-  background: radial-gradient(circle, rgba(8, 181, 229, 0.18), transparent 70%);
+@utility bg-surface-2 {
+  background-color: #003734;
 }
 
-@utility glass-panel {
-  backdrop-filter: blur(18px);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--color-border-glass);
+@utility bg-bioluminescent {
+  background: var(--gradient-bioluminescent);
+}
+
+@utility bg-aurora {
+  background: var(--gradient-aurora);
+}
+
+@utility btn-primary-cta {
+  background: var(--gradient-aurora);
+  border-radius: 6px;
+  color: #011d1c;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 14px 28px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: none !important;
+
+  &:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+}
+
+@utility feature-card {
+  background-color: #003734;
+  border-radius: 16px;
+  padding: 36px;
+  border: 1px solid rgba(203, 255, 252, 0.08);
+  box-shadow: none !important;
+}
+
+@utility stat-counter-val {
+  font-family: var(--font-primary);
+  font-size: 86px;
+  font-weight: 500;
+  line-height: 1.0;
+  color: #fde9ff;
+}
+
+@utility stat-counter-label {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #edfffe;
+}
+
+@utility section-kicker {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #bbc7c6;
 }
 
 body {
-  background-color: var(--color-midnight-navy);
-  color: var(--color-text-primary);
+  background-color: #012624;
+  color: #bbc7c6;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-::selection {
-  background: var(--color-stellar-blue);
-  color: #fff;
+h1, h2, h3 {
+  font-weight: 500 !important;
+  color: #ffffff;
+  letter-spacing: -0.04em;
 }
+
+h1 {
+  font-size: 61px;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+
+h2 {
+  font-size: 36px;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+h3 {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+p, span, div {
+  font-weight: 400;
+}
+
+::selection {
+  background: #00827c;
+  color: #ffffff;
+}
+

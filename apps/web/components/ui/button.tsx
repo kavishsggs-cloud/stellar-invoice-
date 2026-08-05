@@ -5,10 +5,11 @@ import { motion, HTMLMotionProps } from "framer-motion";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export interface ButtonProps extends HTMLMotionProps<"button"> {
+export interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
   variant?: "primary" | "secondary" | "danger" | "ghost";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
+  children?: React.ReactNode;
 }
 
 export function cn(...inputs: (string | undefined | null | false)[]) {
