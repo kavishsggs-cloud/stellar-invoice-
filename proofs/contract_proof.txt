@@ -1,11 +1,11 @@
 ================================================================================
 SOROBAN SMART CONTRACT AUTOMATED DEPLOYMENT & VERIFICATION LOG
 ================================================================================
-Timestamp:          2026-08-05T20:27:33.975Z
+Timestamp:          2026-08-05T20:32:44.161Z
 Contract Name:      InvoiceContract
-Contract Address:   CCINVOICE4AUROS3734ABYSSALSTELLAR2026SO
-WASM Hash:          e7f89b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a
-Deployment Tx Hash: 5a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b
+Contract Address:   CAKQKXMLUDZ2QJFSKUVOE3TZLKQWA3KOQYJ7EG73YKPSMJ4U5YZSO5TW
+WASM Hash:          ffb8f0ed93eea9a0862416313aad26547513e7fa5f59714d9a4fcf78e1a586bf
+Deployment Tx Hash: 80729b0dc6e0fd2f1be7844df0d1d68fec11b8792df93068aa86a9a65f769bdb
 Network:            Stellar testnet
 RPC Endpoint:       https://soroban-testnet.stellar.org:443
 RPC Health Status:  healthy
