@@ -221,11 +221,15 @@ export default function NexusCinematicEngine() {
       {/* Navigation Header */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-8 py-5 flex items-center justify-between backdrop-blur-md border-b border-[#cbfffc]/10 bg-[#012624]/80">
         <div className="flex items-center space-x-3">
-          <div className="h-9 w-9 rounded-[6px] bg-[#003734] border border-[#cbfffc]/20 flex items-center justify-center">
-            <Hexagon className="h-5 w-5 text-[#cbfffc] animate-spin-slow" />
+          <div className="h-9 w-9 rounded-[6px] bg-[#003734] border border-[#cbfffc]/20 flex items-center justify-center overflow-hidden p-1">
+            <img
+              src="/logo.png"
+              alt="Stellar Invoice.AUROS TERMINAL Logo"
+              className="h-6 w-6 object-contain"
+            />
           </div>
-          <span className="text-xl font-medium tracking-tight text-[#ffffff]">
-            AUROS TERMINAL
+          <span className="text-lg font-medium tracking-tight text-[#ffffff]">
+            Stellar Invoice.AUROS TERMINAL
           </span>
         </div>
 
@@ -622,7 +626,7 @@ export default function NexusCinematicEngine() {
           opaque ledgers.&rdquo;
         </h2>
         <p className="mt-8 text-[#bbc7c6] max-w-xl mx-auto text-base leading-[1.4]">
-          Stellar Invoice brings transparency and instant settlement to modern
+          Stellar Invoice.AUROS TERMINAL brings transparency and instant settlement to modern
           SaaS companies and global freelancers alike.
         </p>
       </section>

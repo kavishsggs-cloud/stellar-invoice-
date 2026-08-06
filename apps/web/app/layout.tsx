@@ -10,8 +10,13 @@ import { Onboarding } from "../components/onboarding";
 import { Background } from "../components/ui/Background";
 
 export const metadata: Metadata = {
-  title: "Stellar Invoice",
-  description: "Borderless invoicing powered by Stellar.",
+  title: "Stellar Invoice.AUROS TERMINAL",
+  description: "Borderless invoicing powered by Stellar and Soroban smart contracts.",
+  openGraph: {
+    title: "Stellar Invoice.AUROS TERMINAL",
+    description: "Borderless invoicing powered by Stellar and Soroban smart contracts.",
+    siteName: "Stellar Invoice.AUROS TERMINAL",
+  },
 };
 
 export default function RootLayout({

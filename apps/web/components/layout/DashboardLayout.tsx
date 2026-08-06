@@ -40,14 +40,15 @@ export const DashboardLayout = ({
     <div className="flex flex-col h-full bg-[#0B1728]/50 backdrop-blur-md">
       {/* Brand logo container */}
       <div className="p-6 flex items-center space-x-3 border-b border-white/5">
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary-cta shadow-[var(--shadow-premium-button)]">
-          <Hexagon
-            className="h-6 w-6 text-white animate-spin-slow"
-            strokeWidth={2.5}
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#003734] border border-[#cbfffc]/20 overflow-hidden p-1 shadow-md">
+          <img
+            src="/logo.png"
+            alt="Stellar Invoice.AUROS TERMINAL Logo"
+            className="h-7 w-7 object-contain"
           />
         </div>
-        <span className="text-xl font-bold tracking-tight text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-text-secondary">
-          Stellar Invoice
+        <span className="text-sm font-bold tracking-tight text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-[#cbfffc]">
+          Stellar Invoice.AUROS TERMINAL
         </span>
       </div>
 
@@ -134,11 +135,15 @@ export const DashboardLayout = ({
         <header className="flex items-center justify-between px-6 sm:px-8 py-4 border-b border-white/5 bg-[#0B1728]/30 backdrop-blur-md z-30">
           {/* Mobile hamburger logo */}
           <div className="flex items-center space-x-3 md:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-cta">
-              <Hexagon className="h-5 w-5 text-white" strokeWidth={2.5} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#003734] border border-[#cbfffc]/20 overflow-hidden p-1">
+              <img
+                src="/logo.png"
+                alt="Stellar Invoice.AUROS TERMINAL Logo"
+                className="h-5 w-5 object-contain"
+              />
             </div>
-            <span className="text-base font-bold tracking-tight text-white">
-              Stellar Invoice
+            <span className="text-xs font-bold tracking-tight text-white">
+              Stellar Invoice.AUROS TERMINAL
             </span>
           </div>
 
