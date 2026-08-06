@@ -20,6 +20,7 @@ import {
   RotateCw,
   ExternalLink,
   ShieldCheck,
+  Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { logAnalyticsEvent } from "../../../lib/analytics";
@@ -100,6 +101,12 @@ export default function Dashboard() {
       setSyncingId(null);
       toast.success(`Invoice #${invIdStr} status updated from Soroban contract!`);
     }, 600);
+  };
+
+  const handleCopyPaymentLink = (invIdStr: string) => {
+    const url = `${window.location.origin}/pay/${invIdStr}`;
+    navigator.clipboard.writeText(url);
+    toast.success("Payment link copied to clipboard!", { description: url });
   };
 
   const handleOpenVerifyModal = (invIdStr = "") => {
@@ -392,6 +399,15 @@ export default function Dashboard() {
                                   ? "CANCELLED"
                                   : "PENDING"}
                             </span>
+
+                            <button
+                              title="Copy Payment Link"
+                              onClick={() => handleCopyPaymentLink(invoice.id.toString())}
+                              className="p-1 rounded-[4px] bg-[#012624] text-[#bbc7c6] hover:text-[#cbfffc] hover:border-[#cbfffc]/30 border border-[#cbfffc]/10 transition-colors flex items-center gap-1 px-1.5 text-[10px]"
+                            >
+                              <Copy size={12} className="text-[#cbfffc]" />
+                              <span>Copy Link</span>
+                            </button>
 
                             <button
                               title="Refresh On-Chain Status"

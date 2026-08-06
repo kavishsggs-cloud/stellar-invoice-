@@ -8,7 +8,7 @@ import {
 } from "@repo/sdk";
 import { logAnalyticsEvent } from "../lib/analytics";
 import { toast } from "sonner";
-import { isPaidOverride } from "../lib/stellar-rpc";
+import { isPaidOverride, queryLiveSorobanInvoiceState, savePaidOverride } from "../lib/stellar-rpc";
 
 export const useInvoices = (address?: string | null) => {
   const [data, setData] = useState<Invoice[]>([]);
@@ -33,14 +33,30 @@ export const useInvoices = (address?: string | null) => {
         const resultVal = await simulateContractCall(address, callData);
         const parsed = api.parseInvoiceList(resultVal);
 
-        // Apply local paid overrides if invoice was confirmed on Horizon/Testnet
-        const updated = parsed.map((inv) => {
-          const invIdStr = inv.id.toString();
-          if (isPaidOverride(invIdStr) && inv.status !== InvoiceStatus.Paid) {
-            return { ...inv, status: InvoiceStatus.Paid };
-          }
-          return inv;
-        });
+        // Fetch live on-chain Soroban state for every PENDING invoice
+        const updated = await Promise.all(
+          parsed.map(async (inv) => {
+            const invIdStr = inv.id.toString();
+
+            if (isPaidOverride(invIdStr)) {
+              return { ...inv, status: InvoiceStatus.Paid };
+            }
+
+            if (inv.status === InvoiceStatus.Pending) {
+              try {
+                const liveRes = await queryLiveSorobanInvoiceState(invIdStr, address);
+                if (liveRes && liveRes.invoice.status === InvoiceStatus.Paid) {
+                  savePaidOverride(invIdStr, liveRes.invoice.txHash || "soroban_paid");
+                  return { ...inv, status: InvoiceStatus.Paid, txHash: liveRes.invoice.txHash || inv.txHash };
+                }
+              } catch (e) {
+                console.warn(`Failed to query live Soroban state for invoice #${invIdStr}`, e);
+              }
+            }
+
+            return inv;
+          })
+        );
 
         // Check for payment transitions
         updated.forEach((inv) => {

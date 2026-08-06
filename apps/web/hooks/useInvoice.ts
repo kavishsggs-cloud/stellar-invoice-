@@ -8,7 +8,7 @@ import {
 } from "@repo/sdk";
 import { logAnalyticsEvent } from "../lib/analytics";
 import { toast } from "sonner";
-import { isPaidOverride, queryLiveSorobanInvoiceState } from "../lib/stellar-rpc";
+import { isPaidOverride, queryLiveSorobanInvoiceState, savePaidOverride } from "../lib/stellar-rpc";
 
 export const useInvoice = (id: string | null) => {
   const [data, setData] = useState<Invoice | null>(null);
@@ -54,8 +54,14 @@ export const useInvoice = (id: string | null) => {
       }
 
       if (parsed) {
-        if (isPaidOverride(id) && parsed.status !== InvoiceStatus.Paid) {
+        if (isPaidOverride(id)) {
           parsed = { ...parsed, status: InvoiceStatus.Paid };
+        } else if (parsed.status === InvoiceStatus.Pending) {
+          const liveRes = await queryLiveSorobanInvoiceState(id);
+          if (liveRes && liveRes.invoice.status === InvoiceStatus.Paid) {
+            savePaidOverride(id, liveRes.invoice.txHash || "soroban_paid");
+            parsed = { ...parsed, status: InvoiceStatus.Paid, txHash: liveRes.invoice.txHash || parsed.txHash };
+          }
         }
 
         if (

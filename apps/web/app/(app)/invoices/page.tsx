@@ -17,6 +17,7 @@ import {
   RefreshCw,
   RotateCw,
   ShieldCheck,
+  Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { logAnalyticsEvent } from "../../../lib/analytics";
@@ -75,6 +76,12 @@ export default function InvoicesList() {
       setSyncingId(null);
       toast.success(`Invoice #${invIdStr} status updated from Soroban contract!`);
     }, 600);
+  };
+
+  const handleCopyPaymentLink = (invIdStr: string) => {
+    const url = `${window.location.origin}/pay/${invIdStr}`;
+    navigator.clipboard.writeText(url);
+    toast.success("Payment link copied to clipboard!", { description: url });
   };
 
   const handleOpenVerifyModal = (invIdStr = "") => {
@@ -398,6 +405,15 @@ export default function InvoicesList() {
                         <td className="px-6 py-5 text-right">
                           <div className="flex items-center justify-end space-x-2">
                             <button
+                              title="Copy Payment Link"
+                              onClick={() => handleCopyPaymentLink(invoice.id.toString())}
+                              className="p-1.5 rounded-[6px] bg-[#012624] text-[#bbc7c6] hover:text-[#cbfffc] hover:border-[#cbfffc]/30 border border-[#cbfffc]/15 transition-colors flex items-center gap-1 text-xs px-2"
+                            >
+                              <Copy size={12} className="text-[#cbfffc]" />
+                              <span>Copy Link</span>
+                            </button>
+
+                            <button
                               title="Refresh On-Chain Status"
                               onClick={() => handleRowRefresh(invoice.id.toString())}
                               disabled={syncingId === invoice.id.toString()}
@@ -408,7 +424,7 @@ export default function InvoicesList() {
                                 className={syncingId === invoice.id.toString() ? "animate-spin text-[#cbfffc]" : ""}
                               />
                             </button>
-                            <Link href={`/invoice/${invoice.id.toString()}`}>
+                            <Link href={`/pay/${invoice.id.toString()}`}>
                               <Button className="bg-[#012624] text-[#edfffe] font-medium text-[12px] uppercase tracking-[0.05em] rounded-[6px] px-3.5 py-1.5 hover:bg-[#012624]/80 border border-[#cbfffc]/15 shadow-none">
                                 View Link
                                 <ExternalLink size={12} className="ml-1 inline" />

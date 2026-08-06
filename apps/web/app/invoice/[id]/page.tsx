@@ -17,6 +17,7 @@ import {
   Calendar,
   Clock,
   Sparkles,
+  Copy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,6 +33,12 @@ export default function InvoicePage() {
   const [internalStep, setInternalStep] = useState(0);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [hasRedirected, setHasRedirected] = useState(false);
+
+  const handleCopyPaymentLink = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    toast.success("Payment link copied to clipboard!", { description: url });
+  };
 
   const {
     data: invoice,
@@ -181,7 +188,14 @@ export default function InvoicePage() {
                   {InvoiceStatus[invoice.status].toUpperCase()}
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleCopyPaymentLink}
+                  className="bg-[#003734] hover:bg-[#003734]/80 text-[#cbfffc] border border-[#cbfffc]/20 px-3 py-1 rounded-[6px] text-xs font-medium uppercase tracking-[0.05em] flex items-center gap-1.5 transition-colors"
+                >
+                  <Copy size={12} className="text-[#cbfffc]" />
+                  <span>Copy Link</span>
+                </button>
                 <span className="text-xs font-medium text-[#bbc7c6] uppercase tracking-[0.1em]">
                   INV ID
                 </span>
