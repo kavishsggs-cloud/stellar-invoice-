@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { InvoiceStatus } from "@repo/sdk";
 import { useWallet } from "../../../hooks/useWallet";
 import { usePayment } from "../../../hooks/usePayment";
@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Calendar,
   Clock,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,11 +24,14 @@ import { Button } from "../../../components/ui/button";
 
 export default function InvoicePage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const { address, connect } = useWallet();
   const { status, error, txHash, payInvoice } = usePayment();
   const { getTransactionUrl, getAccountUrl } = useExplorer();
   const [internalStep, setInternalStep] = useState(0);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   const {
     data: invoice,
@@ -55,6 +59,23 @@ export default function InvoicePage() {
       setInternalStep(0);
     }
   }, [status, internalStep, refetch]);
+
+  // Handle external or direct payment settlement auto-redirection
+  useEffect(() => {
+    if (invoice && invoice.status === InvoiceStatus.Paid && !hasRedirected) {
+      setHasRedirected(true);
+      setIsRedirecting(true);
+      toast.success("Payment Confirmed on Stellar Testnet!", {
+        description: `Invoice #${id} has been settled. Redirecting to Dashboard...`,
+      });
+
+      const timer = setTimeout(() => {
+        router.push(`/dashboard?payment=success&id=${invoice.id.toString()}`);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [invoice, hasRedirected, id, router]);
 
   const handlePay = async () => {
     if (!invoice) return;
@@ -173,7 +194,7 @@ export default function InvoicePage() {
             <div className="p-8 md:p-10 flex flex-col lg:flex-row gap-12 relative">
               {/* Overlay for Live Payment Status Timeline */}
               <AnimatePresence>
-                {status !== "idle" && status !== "error" && (
+                {((status !== "idle" && status !== "error") || isRedirecting) && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -181,7 +202,22 @@ export default function InvoicePage() {
                     className="absolute inset-0 z-40 bg-[#011d1c]/95 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
                   >
                     <div className="w-full max-w-sm space-y-8">
-                      {status !== "success" ? (
+                      {isRedirecting || status === "success" ? (
+                        <div className="flex flex-col items-center">
+                          <div className="w-16 h-16 rounded-full bg-[#003734] border border-[#cbfffc]/40 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(203,255,252,0.35)]">
+                            <CheckCircle2
+                              className="text-[#cbfffc] animate-bounce"
+                              size={44}
+                            />
+                          </div>
+                          <h3 className="text-xl font-medium text-[#ffffff] flex items-center gap-2">
+                            Payment Confirmed <Sparkles size={18} className="text-[#cbfffc]" />
+                          </h3>
+                          <p className="text-xs text-[#cbfffc] mt-1 font-mono">
+                            Settled on Stellar Testnet • Redirecting to Dashboard...
+                          </p>
+                        </div>
+                      ) : (
                         <div className="flex flex-col items-center">
                           <Loader2
                             className="animate-spin text-[#cbfffc] mb-4"
@@ -190,19 +226,6 @@ export default function InvoicePage() {
                           <h3 className="text-xl font-medium text-[#ffffff]">
                             Executing Settle Logic
                           </h3>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <CheckCircle2
-                            className="text-[#cbfffc] mb-4 animate-bounce"
-                            size={48}
-                          />
-                          <h3 className="text-xl font-medium text-[#ffffff]">
-                            Payment Confirmed
-                          </h3>
-                          <p className="text-xs text-[#bbc7c6] mt-1">
-                            Transaction recorded on-chain
-                          </p>
                         </div>
                       )}
 

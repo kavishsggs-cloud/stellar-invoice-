@@ -72,12 +72,12 @@ export const useInvoice = (id: string | null) => {
   useEffect(() => {
     fetchInvoice();
 
-    // Poll every 4 seconds if invoice is currently Pending
+    // Poll every 3 seconds if invoice is currently Pending
     const intervalId = setInterval(() => {
       if (prevStatusRef.current === InvoiceStatus.Pending) {
         fetchInvoice();
       }
-    }, 4000);
+    }, 3000);
 
     return () => clearInterval(intervalId);
   }, [fetchInvoice]);

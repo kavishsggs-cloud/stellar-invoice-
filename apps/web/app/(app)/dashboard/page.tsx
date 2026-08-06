@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useWallet } from "../../../hooks/useWallet";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { InvoiceStatus } from "@repo/sdk";
@@ -16,6 +17,8 @@ import {
   Activity,
   Calendar,
   RefreshCw,
+  RotateCw,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { logAnalyticsEvent } from "../../../lib/analytics";
@@ -55,8 +58,23 @@ const AnimatedCounter = ({
 
 export default function Dashboard() {
   const { address } = useWallet();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { invoices, metrics, isLoading, refetch } = useDashboard();
   const [isSyncing, setIsSyncing] = useState(false);
+  const [syncingId, setSyncingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const payment = searchParams.get("payment");
+    const invId = searchParams.get("id");
+    if (payment === "success") {
+      toast.success("Payment Confirmed on Stellar Testnet!", {
+        description: invId ? `Invoice #${invId} updated to PAID.` : "Invoice settled successfully.",
+      });
+      refetch();
+      router.refresh();
+    }
+  }, [searchParams, refetch, router]);
 
   const handleSyncOnChain = async () => {
     setIsSyncing(true);
@@ -66,6 +84,17 @@ export default function Dashboard() {
     setTimeout(() => {
       setIsSyncing(false);
       toast.success("On-chain sync complete!");
+    }, 600);
+  };
+
+  const handleCardRefresh = async (invIdStr: string) => {
+    setSyncingId(invIdStr);
+    toast.info(`Checking live Testnet contract status for Invoice #${invIdStr}...`);
+    logAnalyticsEvent("manual_card_sync", { metadata: { invoiceId: invIdStr } });
+    await refetch();
+    setTimeout(() => {
+      setSyncingId(null);
+      toast.success(`Invoice #${invIdStr} status updated from Soroban contract!`);
     }, 600);
   };
 
@@ -321,11 +350,11 @@ export default function Dashboard() {
                           <p className="font-medium text-[#fde9ff] text-base font-['Matter',sans-serif]">
                             {(Number(invoice.amount) / 10000000).toFixed(2)} XLM
                           </p>
-                          <div className="sm:mt-1">
+                          <div className="sm:mt-1 flex items-center gap-2">
                             <span
                               className={`text-[10px] font-medium uppercase tracking-[0.1em] px-2.5 py-0.5 rounded-[4px] border ${
                                 isPaidStatus
-                                  ? "bg-[#012624] text-[#cbfffc] border-[#cbfffc]/30"
+                                  ? "bg-[#012624] text-[#cbfffc] border-[#cbfffc]/40 shadow-[0_0_12px_rgba(203,255,252,0.2)]"
                                   : isCancelledStatus
                                     ? "bg-[#011d1c] text-[#707777] border-[#707777]/30"
                                     : "bg-[#003734] text-[#edfffe] border-[#edfffe]/30"
@@ -337,6 +366,18 @@ export default function Dashboard() {
                                   ? "CANCELLED"
                                   : "PENDING"}
                             </span>
+
+                            <button
+                              title="Refresh On-Chain Status"
+                              onClick={() => handleCardRefresh(invoice.id.toString())}
+                              disabled={syncingId === invoice.id.toString()}
+                              className="p-1 rounded-[4px] bg-[#012624] text-[#bbc7c6] hover:text-[#cbfffc] hover:border-[#cbfffc]/30 border border-[#cbfffc]/10 transition-colors"
+                            >
+                              <RotateCw
+                                size={12}
+                                className={syncingId === invoice.id.toString() ? "animate-spin text-[#cbfffc]" : ""}
+                              />
+                            </button>
                           </div>
                         </div>
                       </div>

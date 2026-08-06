@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useWallet } from "../../../hooks/useWallet";
 import { useInvoices } from "../../../hooks/useInvoices";
 import { InvoiceStatus } from "@repo/sdk";
@@ -14,6 +15,7 @@ import {
   SlidersHorizontal,
   ExternalLink,
   RefreshCw,
+  RotateCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { logAnalyticsEvent } from "../../../lib/analytics";
@@ -23,8 +25,11 @@ import { Skeleton } from "../../../components/ui/Skeleton";
 
 export default function InvoicesList() {
   const { address } = useWallet();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { data: invoices, isLoading, refetch } = useInvoices(address);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [syncingId, setSyncingId] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -34,6 +39,18 @@ export default function InvoicesList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  useEffect(() => {
+    const payment = searchParams.get("payment");
+    const invId = searchParams.get("id");
+    if (payment === "success") {
+      toast.success("Payment Confirmed on Stellar Testnet!", {
+        description: invId ? `Invoice #${invId} updated to PAID.` : "Invoice settled successfully.",
+      });
+      refetch();
+      router.refresh();
+    }
+  }, [searchParams, refetch, router]);
+
   const handleSyncOnChain = async () => {
     setIsSyncing(true);
     toast.info("Syncing on-chain invoice status with Stellar Testnet...");
@@ -42,6 +59,17 @@ export default function InvoicesList() {
     setTimeout(() => {
       setIsSyncing(false);
       toast.success("On-chain sync complete!");
+    }, 600);
+  };
+
+  const handleRowRefresh = async (invIdStr: string) => {
+    setSyncingId(invIdStr);
+    toast.info(`Checking live Testnet contract status for Invoice #${invIdStr}...`);
+    logAnalyticsEvent("manual_row_sync", { metadata: { invoiceId: invIdStr } });
+    await refetch();
+    setTimeout(() => {
+      setSyncingId(null);
+      toast.success(`Invoice #${invIdStr} status updated from Soroban contract!`);
     }, 600);
   };
 
@@ -115,7 +143,7 @@ export default function InvoicesList() {
     switch (status) {
       case InvoiceStatus.Paid:
         return (
-          <span className="text-[10px] font-medium uppercase tracking-[0.1em] px-2.5 py-0.5 rounded-[4px] border bg-[#012624] text-[#cbfffc] border-[#cbfffc]/30">
+          <span className="text-[10px] font-medium uppercase tracking-[0.1em] px-2.5 py-0.5 rounded-[4px] border bg-[#012624] text-[#cbfffc] border-[#cbfffc]/40 shadow-[0_0_12px_rgba(203,255,252,0.2)]">
             Paid
           </span>
         );
@@ -342,12 +370,25 @@ export default function InvoicesList() {
                           ).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-5 text-right">
-                          <Link href={`/invoice/${invoice.id.toString()}`}>
-                            <Button className="bg-[#012624] text-[#edfffe] font-medium text-[12px] uppercase tracking-[0.05em] rounded-[6px] px-3.5 py-1.5 hover:bg-[#012624]/80 border border-[#cbfffc]/15 shadow-none">
-                              View Link
-                              <ExternalLink size={12} className="ml-1 inline" />
-                            </Button>
-                          </Link>
+                          <div className="flex items-center justify-end space-x-2">
+                            <button
+                              title="Refresh On-Chain Status"
+                              onClick={() => handleRowRefresh(invoice.id.toString())}
+                              disabled={syncingId === invoice.id.toString()}
+                              className="p-1.5 rounded-[6px] bg-[#012624] text-[#bbc7c6] hover:text-[#cbfffc] hover:border-[#cbfffc]/30 border border-[#cbfffc]/15 transition-colors"
+                            >
+                              <RotateCw
+                                size={14}
+                                className={syncingId === invoice.id.toString() ? "animate-spin text-[#cbfffc]" : ""}
+                              />
+                            </button>
+                            <Link href={`/invoice/${invoice.id.toString()}`}>
+                              <Button className="bg-[#012624] text-[#edfffe] font-medium text-[12px] uppercase tracking-[0.05em] rounded-[6px] px-3.5 py-1.5 hover:bg-[#012624]/80 border border-[#cbfffc]/15 shadow-none">
+                                View Link
+                                <ExternalLink size={12} className="ml-1 inline" />
+                              </Button>
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -370,7 +411,20 @@ export default function InvoicesList() {
                           {invoice.clientName || "Unknown Client"}
                         </p>
                       </div>
-                      {getStatusBadge(invoice.status)}
+                      <div className="flex items-center space-x-2">
+                        {getStatusBadge(invoice.status)}
+                        <button
+                          title="Refresh On-Chain Status"
+                          onClick={() => handleRowRefresh(invoice.id.toString())}
+                          disabled={syncingId === invoice.id.toString()}
+                          className="p-1 rounded-[4px] bg-[#012624] text-[#bbc7c6] hover:text-[#cbfffc] hover:border-[#cbfffc]/30 border border-[#cbfffc]/10 transition-colors"
+                        >
+                          <RotateCw
+                            size={12}
+                            className={syncingId === invoice.id.toString() ? "animate-spin text-[#cbfffc]" : ""}
+                          />
+                        </button>
+                      </div>
                     </div>
                     <div className="flex justify-between items-end pt-2">
                       <div>
