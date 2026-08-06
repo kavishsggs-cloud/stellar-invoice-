@@ -33,25 +33,23 @@ export const useInvoices = (address?: string | null) => {
         const resultVal = await simulateContractCall(address, callData);
         const parsed = api.parseInvoiceList(resultVal);
 
-        // Fetch live on-chain Soroban state for every PENDING invoice
+        // Fetch live on-chain Soroban state for every invoice
         const updated = await Promise.all(
           parsed.map(async (inv) => {
             const invIdStr = inv.id.toString();
 
-            if (isPaidOverride(invIdStr)) {
-              return { ...inv, status: InvoiceStatus.Paid };
+            try {
+              const liveRes = await queryLiveSorobanInvoiceState(invIdStr, address);
+              if (liveRes && liveRes.invoice) {
+                inv = { ...inv, status: liveRes.invoice.status, txHash: liveRes.invoice.txHash || inv.txHash };
+              }
+            } catch (e) {
+              console.warn(`Failed to query live Soroban state for invoice #${invIdStr}`, e);
             }
 
-            if (inv.status === InvoiceStatus.Pending) {
-              try {
-                const liveRes = await queryLiveSorobanInvoiceState(invIdStr, address);
-                if (liveRes && liveRes.invoice.status === InvoiceStatus.Paid) {
-                  savePaidOverride(invIdStr, liveRes.invoice.txHash || "soroban_paid");
-                  return { ...inv, status: InvoiceStatus.Paid, txHash: liveRes.invoice.txHash || inv.txHash };
-                }
-              } catch (e) {
-                console.warn(`Failed to query live Soroban state for invoice #${invIdStr}`, e);
-              }
+            // Optimistic override if RPC is lagging
+            if (inv.status !== InvoiceStatus.Paid && (isPaidOverride(invIdStr) || localStorage.getItem(`invoice_status_${invIdStr}`) === "PAID")) {
+              return { ...inv, status: InvoiceStatus.Paid };
             }
 
             return inv;

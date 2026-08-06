@@ -61,11 +61,16 @@ export default function InvoicePage() {
       setInternalStep(3);
     } else if (status === "success") {
       setInternalStep(4);
+      if (invoice) {
+        localStorage.setItem(`invoice_status_${invoice.id.toString()}`, "PAID");
+        window.dispatchEvent(new Event("storage"));
+        window.dispatchEvent(new Event("invoice-paid"));
+      }
       refetch();
     } else if (status === "idle" || status === "error") {
       setInternalStep(0);
     }
-  }, [status, internalStep, refetch]);
+  }, [status, internalStep, refetch, invoice]);
 
   // Handle external or direct payment settlement auto-redirection
   useEffect(() => {
