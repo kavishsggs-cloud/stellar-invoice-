@@ -1,15 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Invoice,
+  InvoiceStatus,
   InvoiceContractAPI,
   CONTRACT_ID,
   simulateContractCall,
 } from "@repo/sdk";
+import { logAnalyticsEvent } from "../lib/analytics";
+import { toast } from "sonner";
 
 export const useInvoice = (id: string | null) => {
   const [data, setData] = useState<Invoice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const prevStatusRef = useRef<InvoiceStatus | null>(null);
 
   const fetchInvoice = useCallback(async () => {
     if (!id) {
@@ -18,7 +22,6 @@ export const useInvoice = (id: string | null) => {
       return;
     }
 
-    setIsLoading(true);
     setError(null);
     try {
       const api = new InvoiceContractAPI(CONTRACT_ID);
@@ -32,6 +35,24 @@ export const useInvoice = (id: string | null) => {
           "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
         const resultVal = await simulateContractCall(dummySource, callData);
         const parsed = api.parseInvoice(resultVal);
+
+        if (
+          prevStatusRef.current === InvoiceStatus.Pending &&
+          parsed.status === InvoiceStatus.Paid
+        ) {
+          toast.success("Payment Confirmed On-Chain!", {
+            description: `Invoice #${id} has been settled.`,
+          });
+          logAnalyticsEvent("invoice_paid", {
+            metadata: {
+              invoiceId: id,
+              amount: parsed.amount.toString(),
+              source: "payment_page_poll",
+            },
+          });
+        }
+
+        prevStatusRef.current = parsed.status;
         setData(parsed);
       } catch (simError) {
         console.warn(
@@ -50,7 +71,17 @@ export const useInvoice = (id: string | null) => {
 
   useEffect(() => {
     fetchInvoice();
+
+    // Poll every 4 seconds if invoice is currently Pending
+    const intervalId = setInterval(() => {
+      if (prevStatusRef.current === InvoiceStatus.Pending) {
+        fetchInvoice();
+      }
+    }, 4000);
+
+    return () => clearInterval(intervalId);
   }, [fetchInvoice]);
 
   return { data, isLoading, error, refetch: fetchInvoice };
 };
+

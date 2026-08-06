@@ -1,14 +1,18 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Invoice,
+  InvoiceStatus,
   InvoiceContractAPI,
   CONTRACT_ID,
   simulateContractCall,
 } from "@repo/sdk";
+import { logAnalyticsEvent } from "../lib/analytics";
+import { toast } from "sonner";
 
 export const useInvoices = (address?: string | null) => {
   const [data, setData] = useState<Invoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const previousInvoicesRef = useRef<Map<string, InvoiceStatus>>(new Map());
 
   const fetchInvoices = useCallback(async () => {
     if (!address) {
@@ -17,7 +21,6 @@ export const useInvoices = (address?: string | null) => {
       return;
     }
 
-    setIsLoading(true);
     try {
       const api = new InvoiceContractAPI(CONTRACT_ID);
       const callData = api.getCallData(
@@ -28,6 +31,31 @@ export const useInvoices = (address?: string | null) => {
       try {
         const resultVal = await simulateContractCall(address, callData);
         const parsed = api.parseInvoiceList(resultVal);
+
+        // Check for payment transitions
+        parsed.forEach((inv) => {
+          const invIdStr = inv.id.toString();
+          const prevStatus = previousInvoicesRef.current.get(invIdStr);
+
+          if (
+            prevStatus === InvoiceStatus.Pending &&
+            inv.status === InvoiceStatus.Paid
+          ) {
+            toast.success(`Payment Received for Invoice #${invIdStr}!`, {
+              description: `Amount: ${(Number(inv.amount) / 10000000).toFixed(2)} XLM`,
+            });
+            logAnalyticsEvent("invoice_paid", {
+              metadata: {
+                invoiceId: invIdStr,
+                amount: inv.amount.toString(),
+                source: "external_wallet_scan",
+              },
+            });
+          }
+
+          previousInvoicesRef.current.set(invIdStr, inv.status);
+        });
+
         setData(parsed);
       } catch (simError) {
         console.warn(
@@ -45,7 +73,15 @@ export const useInvoices = (address?: string | null) => {
 
   useEffect(() => {
     fetchInvoices();
+
+    // Configure 5-second polling interval for real-time payment sync
+    const intervalId = setInterval(() => {
+      fetchInvoices();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, [fetchInvoices]);
 
   return { data, isLoading, refetch: fetchInvoices };
 };
+

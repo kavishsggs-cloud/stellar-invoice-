@@ -15,7 +15,10 @@ import {
   Wallet,
   Activity,
   Calendar,
+  RefreshCw,
 } from "lucide-react";
+import { toast } from "sonner";
+import { logAnalyticsEvent } from "../../../lib/analytics";
 import RevenueChart from "../../../components/RevenueChart";
 import { motion } from "framer-motion";
 import { Button } from "../../../components/ui/button";
@@ -52,7 +55,19 @@ const AnimatedCounter = ({
 
 export default function Dashboard() {
   const { address } = useWallet();
-  const { invoices, metrics, isLoading } = useDashboard();
+  const { invoices, metrics, isLoading, refetch } = useDashboard();
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSyncOnChain = async () => {
+    setIsSyncing(true);
+    toast.info("Syncing on-chain invoice status with Stellar Testnet...");
+    logAnalyticsEvent("manual_sync", { metadata: { page: "dashboard" } });
+    await refetch();
+    setTimeout(() => {
+      setIsSyncing(false);
+      toast.success("On-chain sync complete!");
+    }, 600);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -104,6 +119,14 @@ export default function Dashboard() {
           </p>
         </div>
         <div className="flex space-x-3 w-full sm:w-auto">
+          <Button
+            onClick={handleSyncOnChain}
+            disabled={isSyncing}
+            className="w-full sm:w-auto bg-[#003734] text-[#ffffff] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-4 py-2.5 hover:bg-[#003734]/80 border border-[#cbfffc]/20 shadow-none flex items-center justify-center"
+          >
+            <RefreshCw size={16} className={`mr-2 inline ${isSyncing ? "animate-spin text-[#cbfffc]" : ""}`} />
+            <span>{isSyncing ? "Syncing..." : "Sync On-Chain Status"}</span>
+          </Button>
           <Link href="/invoices/create" className="w-full sm:w-auto">
             <Button className="w-full sm:w-auto bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0 flex items-center justify-center">
               <PlusCircle size={18} className="mr-2 inline" />

@@ -5,7 +5,7 @@ import { useWallet } from "./useWallet";
 
 export const useDashboard = () => {
   const { address } = useWallet();
-  const { data: invoices, isLoading } = useInvoices(address);
+  const { data: invoices, isLoading, refetch } = useInvoices(address);
 
   const metrics = useMemo(() => {
     if (!invoices) return null;
@@ -39,5 +39,6 @@ export const useDashboard = () => {
     invoices,
     metrics,
     isLoading,
+    refetch,
   };
 };

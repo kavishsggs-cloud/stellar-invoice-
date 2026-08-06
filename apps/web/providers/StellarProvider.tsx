@@ -16,6 +16,7 @@ export interface StellarContextType {
   address: string | null;
   isConnected: boolean;
   isConnecting: boolean;
+  isInitializing: boolean;
   error: string | null;
   connect: () => Promise<void>;
   disconnect: () => void;
@@ -26,6 +27,7 @@ const StellarContext = createContext<StellarContextType>({
   address: null,
   isConnected: false,
   isConnecting: false,
+  isInitializing: true,
   error: null,
   connect: async () => {},
   disconnect: () => {},
@@ -35,6 +37,7 @@ const StellarContext = createContext<StellarContextType>({
 export const StellarProvider = ({ children }: { children: ReactNode }) => {
   const [address, setAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,15 +50,28 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
 
     const checkExistingSession = async () => {
       try {
-        const storedAddress = localStorage.getItem("stellar_address");
-        const storedWalletId = localStorage.getItem("stellar_wallet_id");
+        let storedAddress = typeof window !== "undefined" ? localStorage.getItem("stellar_address") : null;
+        const storedWalletId = typeof window !== "undefined" ? localStorage.getItem("stellar_wallet_id") : null;
 
-        if (storedAddress && storedWalletId) {
-          StellarWalletsKit.setWallet(storedWalletId);
+        if (typeof window !== "undefined") {
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlAddr = urlParams.get("address") || urlParams.get("account");
+          if (urlAddr && !storedAddress) {
+            storedAddress = urlAddr;
+            localStorage.setItem("stellar_address", urlAddr);
+          }
+        }
+
+        if (storedAddress) {
+          if (storedWalletId) {
+            StellarWalletsKit.setWallet(storedWalletId);
+          }
           setAddress(storedAddress);
         }
       } catch (e) {
         console.error("Failed to restore session", e);
+      } finally {
+        setIsInitializing(false);
       }
     };
 
@@ -105,6 +121,7 @@ export const StellarProvider = ({ children }: { children: ReactNode }) => {
         address,
         isConnected: Boolean(address),
         isConnecting,
+        isInitializing,
         error,
         connect,
         disconnect,
