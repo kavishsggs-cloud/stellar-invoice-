@@ -8,6 +8,7 @@ import {
 } from "@repo/sdk";
 import { logAnalyticsEvent } from "../lib/analytics";
 import { toast } from "sonner";
+import { isPaidOverride } from "../lib/stellar-rpc";
 
 export const useInvoices = (address?: string | null) => {
   const [data, setData] = useState<Invoice[]>([]);
@@ -32,8 +33,17 @@ export const useInvoices = (address?: string | null) => {
         const resultVal = await simulateContractCall(address, callData);
         const parsed = api.parseInvoiceList(resultVal);
 
+        // Apply local paid overrides if invoice was confirmed on Horizon/Testnet
+        const updated = parsed.map((inv) => {
+          const invIdStr = inv.id.toString();
+          if (isPaidOverride(invIdStr) && inv.status !== InvoiceStatus.Paid) {
+            return { ...inv, status: InvoiceStatus.Paid };
+          }
+          return inv;
+        });
+
         // Check for payment transitions
-        parsed.forEach((inv) => {
+        updated.forEach((inv) => {
           const invIdStr = inv.id.toString();
           const prevStatus = previousInvoicesRef.current.get(invIdStr);
 
@@ -56,7 +66,7 @@ export const useInvoices = (address?: string | null) => {
           previousInvoicesRef.current.set(invIdStr, inv.status);
         });
 
-        setData(parsed);
+        setData(updated);
       } catch (simError) {
         console.warn(
           "Contract simulation failed, maybe not deployed?",

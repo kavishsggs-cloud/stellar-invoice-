@@ -112,12 +112,32 @@ export class InvoiceContractAPI {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private parseStatus(statusVal: any): InvoiceStatus {
-    if (typeof statusVal === "string") {
-      if (statusVal === "Pending") return InvoiceStatus.Pending;
-      if (statusVal === "Paid") return InvoiceStatus.Paid;
-      if (statusVal === "Cancelled") return InvoiceStatus.Cancelled;
+  public parseStatus(statusVal: any): InvoiceStatus {
+    if (statusVal === null || statusVal === undefined) return InvoiceStatus.Pending;
+
+    if (typeof statusVal === "number") {
+      if (statusVal === 1) return InvoiceStatus.Paid;
+      if (statusVal === 2) return InvoiceStatus.Cancelled;
+      if (statusVal === 0) return InvoiceStatus.Pending;
     }
+
+    if (typeof statusVal === "string") {
+      const lower = statusVal.toLowerCase();
+      if (lower === "paid") return InvoiceStatus.Paid;
+      if (lower === "cancelled" || lower === "canceled") return InvoiceStatus.Cancelled;
+      if (lower === "pending") return InvoiceStatus.Pending;
+    }
+
+    if (typeof statusVal === "object") {
+      const tag = statusVal.tag || statusVal.name || Object.keys(statusVal)[0];
+      if (typeof tag === "string") {
+        const lower = tag.toLowerCase();
+        if (lower === "paid") return InvoiceStatus.Paid;
+        if (lower === "cancelled" || lower === "canceled") return InvoiceStatus.Cancelled;
+        if (lower === "pending") return InvoiceStatus.Pending;
+      }
+    }
+
     return InvoiceStatus.Pending;
   }
 

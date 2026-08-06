@@ -16,9 +16,11 @@ import {
   ExternalLink,
   RefreshCw,
   RotateCw,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { logAnalyticsEvent } from "../../../lib/analytics";
+import { VerifyTxModal } from "../../../components/VerifyTxModal";
 import { motion } from "framer-motion";
 import { Button } from "../../../components/ui/button";
 import { Skeleton } from "../../../components/ui/Skeleton";
@@ -30,6 +32,8 @@ export default function InvoicesList() {
   const { data: invoices, isLoading, refetch } = useInvoices(address);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncingId, setSyncingId] = useState<string | null>(null);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [modalInvoiceId, setModalInvoiceId] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -71,6 +75,11 @@ export default function InvoicesList() {
       setSyncingId(null);
       toast.success(`Invoice #${invIdStr} status updated from Soroban contract!`);
     }, 600);
+  };
+
+  const handleOpenVerifyModal = (invIdStr = "") => {
+    setModalInvoiceId(invIdStr);
+    setIsVerifyModalOpen(true);
   };
 
   const filteredAndSortedInvoices = useMemo(() => {
@@ -169,41 +178,58 @@ export default function InvoicesList() {
   };
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="space-y-6 pb-12 text-[#bbc7c6]"
-    >
+    <>
+      <VerifyTxModal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+        initialInvoiceId={modalInvoiceId}
+        onVerified={() => {
+          refetch();
+          router.refresh();
+        }}
+      />
       <motion.div
-        variants={itemVariants}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="space-y-6 pb-12 text-[#bbc7c6]"
       >
-        <div>
-          <h1 className="text-[36px] font-medium tracking-[-0.03em] text-[#ffffff]">
-            Invoices
-          </h1>
-          <p className="text-[#bbc7c6] mt-1 font-normal text-base">
-            Manage and track your ledger billing records.
-          </p>
-        </div>
-        <div className="flex items-center space-x-3 w-full sm:w-auto">
-          <Button
-            onClick={handleSyncOnChain}
-            disabled={isSyncing}
-            className="w-full sm:w-auto bg-[#003734] text-[#ffffff] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-4 py-2.5 hover:bg-[#003734]/80 border border-[#cbfffc]/20 shadow-none flex items-center justify-center"
-          >
-            <RefreshCw size={16} className={`mr-2 inline ${isSyncing ? "animate-spin text-[#cbfffc]" : ""}`} />
-            <span>{isSyncing ? "Syncing..." : "Sync On-Chain Status"}</span>
-          </Button>
-          <Link href="/invoices/create" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0 flex items-center justify-center">
-              <PlusCircle size={18} className="mr-2 inline" />
-              <span>Create Invoice</span>
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        >
+          <div>
+            <h1 className="text-[36px] font-medium tracking-[-0.03em] text-[#ffffff]">
+              Invoices
+            </h1>
+            <p className="text-[#bbc7c6] mt-1 font-normal text-base">
+              Manage and track your ledger billing records.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <Button
+              onClick={() => handleOpenVerifyModal("")}
+              className="bg-[#003734] text-[#cbfffc] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-3.5 py-2.5 hover:bg-[#003734]/80 border border-[#cbfffc]/20 shadow-none flex items-center justify-center"
+            >
+              <ShieldCheck size={16} className="mr-1.5 inline text-[#cbfffc]" />
+              <span>Verify Tx Hash</span>
             </Button>
-          </Link>
-        </div>
-      </motion.div>
+            <Button
+              onClick={handleSyncOnChain}
+              disabled={isSyncing}
+              className="bg-[#003734] text-[#ffffff] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-4 py-2.5 hover:bg-[#003734]/80 border border-[#cbfffc]/20 shadow-none flex items-center justify-center"
+            >
+              <RefreshCw size={16} className={`mr-2 inline ${isSyncing ? "animate-spin text-[#cbfffc]" : ""}`} />
+              <span>{isSyncing ? "Syncing..." : "Sync On-Chain Status"}</span>
+            </Button>
+            <Link href="/invoices/create" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-[linear-gradient(90deg,#cbfffc_0%,#edfffe_26.25%,#fffdfa_47.57%,#fad1ff_88.96%)] text-[#011d1c] font-medium text-[13px] uppercase tracking-[0.05em] rounded-[6px] px-6 py-2.5 hover:opacity-90 shadow-none border-0 flex items-center justify-center">
+                <PlusCircle size={18} className="mr-2 inline" />
+                <span>Create Invoice</span>
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
 
       <motion.div variants={itemVariants}>
         <div className="bg-[#003734] rounded-[16px] border border-[#cbfffc]/10 shadow-none flex flex-col overflow-hidden">
@@ -493,5 +519,6 @@ export default function InvoicesList() {
         </div>
       </motion.div>
     </motion.div>
+    </>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "@repo/sdk";
 import { logAnalyticsEvent } from "../lib/analytics";
 import { toast } from "sonner";
+import { isPaidOverride, queryLiveSorobanInvoiceState } from "../lib/stellar-rpc";
 
 export const useInvoice = (id: string | null) => {
   const [data, setData] = useState<Invoice | null>(null);
@@ -24,17 +25,38 @@ export const useInvoice = (id: string | null) => {
 
     setError(null);
     try {
-      const api = new InvoiceContractAPI(CONTRACT_ID);
-      const callData = api.getCallData(
-        "get_invoice",
-        api.getInvoiceArgs(BigInt(id)),
-      );
+      let parsed: Invoice | null = null;
 
       try {
+        const api = new InvoiceContractAPI(CONTRACT_ID);
+        const callData = api.getCallData(
+          "get_invoice",
+          api.getInvoiceArgs(BigInt(id)),
+        );
         const dummySource =
           "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
         const resultVal = await simulateContractCall(dummySource, callData);
-        const parsed = api.parseInvoice(resultVal);
+        parsed = api.parseInvoice(resultVal);
+      } catch {
+        // Fallback to un-cached multi-contract live query
+        const liveRes = await queryLiveSorobanInvoiceState(id);
+        if (liveRes) {
+          parsed = liveRes.invoice;
+        }
+      }
+
+      if (!parsed) {
+        // Retry live query one more time
+        const liveRes = await queryLiveSorobanInvoiceState(id);
+        if (liveRes) {
+          parsed = liveRes.invoice;
+        }
+      }
+
+      if (parsed) {
+        if (isPaidOverride(id) && parsed.status !== InvoiceStatus.Paid) {
+          parsed = { ...parsed, status: InvoiceStatus.Paid };
+        }
 
         if (
           prevStatusRef.current === InvoiceStatus.Pending &&
@@ -54,12 +76,8 @@ export const useInvoice = (id: string | null) => {
 
         prevStatusRef.current = parsed.status;
         setData(parsed);
-      } catch (simError) {
-        console.warn(
-          "Contract simulation failed, maybe not deployed or invoice not found?",
-          simError,
-        );
-        setError("Invoice not found or contract not deployed");
+      } else {
+        setError("Invoice not found on Soroban RPC");
       }
     } catch (e) {
       console.error(e);
